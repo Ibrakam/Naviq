@@ -1,0 +1,30 @@
+const DEFAULT_API_URL = 'http://127.0.0.1:8000';
+const API_PREFIX = '/make-server-a1779b8e';
+
+export const apiBaseUrl = import.meta.env.VITE_API_URL || DEFAULT_API_URL;
+
+export function buildApiUrl(path: string) {
+  const normalized = path.startsWith('/') ? path : `/${path}`;
+  return `${apiBaseUrl}${normalized}`;
+}
+
+export const apiRoutes = {
+  login: `${API_PREFIX}/login`,
+  signup: `${API_PREFIX}/signup`,
+  profile: `${API_PREFIX}/profile`,
+  assessmentQuestions: `/api/assessment/questions`,
+  assessmentResult: `/api/assessment/result`,
+  assessmentSubmit: `/api/assessment/submit`,
+  simulations: `${API_PREFIX}/simulations`,
+  simulation: (id: string | number) => `${API_PREFIX}/simulations/${id}`,
+  simulationProgress: (id: string | number) => `${API_PREFIX}/simulations/${id}/progress`,
+  adminAnalytics: `${API_PREFIX}/admin/analytics`,
+  adminSimulations: `${API_PREFIX}/admin/simulations`,
+  gamificationProfile: `/api/gamification/profile`,
+  gamificationStats: `/api/gamification/stats`,
+  gamificationAchievements: `/api/gamification/achievements`,
+  gamificationAllAchievements: `/api/gamification/achievements/all`,
+  gamificationLeaderboard: `/api/gamification/leaderboard`,
+  googleAuth: `/api/auth/google`,
+  completeProfile: `/api/auth/complete-profile`,
+};
