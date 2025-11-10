@@ -1,6 +1,6 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse
+from fastapi.responses import Response, HTMLResponse
 from app.config import settings
 from app.database import engine, Base
 from app.routers import auth, assessment, simulations, tracks, certificates, admin, gamification, new_front
@@ -18,22 +18,59 @@ app = FastAPI(
 )
 
 # CORS middleware - должен быть первым
+# Разрешаем все origins для production (можно ограничить позже)
 cors_origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "http://localhost:3001",
     "http://127.0.0.1:3001",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://62.72.20.193:7000",
+    "http://62.72.20.193",
+
 ]
 
+# Используем regex для более гибкой настройки (разрешаем любой IP/домен на порту 7000)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
+    allow_origin_regex=r"https?://(.*\.)?62\.72\.20\.193(:\d+)?|https?://(.*\.)?31\.148\.164\.107(:\d+)?",
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    allow_methods=["*"],
     allow_headers=["*"],
     expose_headers=["*"],
     max_age=3600,
 )
+
+# Явный обработчик OPTIONS для всех путей (на случай если middleware не сработает)
+@app.options("/{full_path:path}")
+async def options_handler(request: Request, full_path: str):
+    """Handle OPTIONS requests explicitly"""
+    origin = request.headers.get("origin")
+    # Если origin не указан, разрешаем все (но это не рекомендуется с credentials)
+    if not origin:
+        # Проверяем разрешенные origins
+        allowed_origins = [
+            "http://localhost:3000", "http://127.0.0.1:3000",
+            "http://localhost:3001", "http://127.0.0.1:3001",
+            "http://localhost:5173", "http://127.0.0.1:5173",
+            "http://62.72.20.193:7000", "http://62.72.20.193",
+            "https://62.72.20.193:7000", "https://62.72.20.193",
+        ]
+        # Если origin не указан, используем первый разрешенный (для тестирования)
+        origin = allowed_origins[0] if allowed_origins else "*"
+    
+    return Response(
+        status_code=200,
+        headers={
+            "Access-Control-Allow-Origin": origin,
+            "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS, PATCH",
+            "Access-Control-Allow-Headers": "*",
+            "Access-Control-Allow-Credentials": "true",
+            "Access-Control-Max-Age": "3600",
+        },
+    )
 
 # Include routers
 app.include_router(auth.router)
