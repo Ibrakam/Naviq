@@ -17,8 +17,8 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
-# CORS middleware - должен быть первым
-# Разрешаем все origins для production (можно ограничить позже)
+# CORS middleware must be added before routers
+# Allowing broad origins for now (tighten for production)
 cors_origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
@@ -31,7 +31,7 @@ cors_origins = [
 
 ]
 
-# Используем regex для более гибкой настройки (разрешаем любой IP/домен на порту 7000)
+# Regex allows wildcard subdomains on target hosts
 app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
@@ -43,14 +43,14 @@ app.add_middleware(
     max_age=3600,
 )
 
-# Явный обработчик OPTIONS для всех путей (на случай если middleware не сработает)
+# Explicit OPTIONS handler as a fallback
 @app.options("/{full_path:path}")
 async def options_handler(request: Request, full_path: str):
     """Handle OPTIONS requests explicitly"""
     origin = request.headers.get("origin")
-    # Если origin не указан, разрешаем все (но это не рекомендуется с credentials)
+    # Fallback when no origin header is present (not ideal with credentials)
     if not origin:
-        # Проверяем разрешенные origins
+        # Use the first allowed origin to keep browsers happy
         allowed_origins = [
             "http://localhost:3000", "http://127.0.0.1:3000",
             "http://localhost:3001", "http://127.0.0.1:3001",
@@ -58,7 +58,6 @@ async def options_handler(request: Request, full_path: str):
             "http://62.72.20.193:7000", "http://62.72.20.193",
             "https://62.72.20.193:7000", "https://62.72.20.193",
         ]
-        # Если origin не указан, используем первый разрешенный (для тестирования)
         origin = allowed_origins[0] if allowed_origins else "*"
     
     return Response(
@@ -156,7 +155,7 @@ def read_root():
     <body>
         <div class="container">
             <h1>🚀 Naviq</h1>
-            <p class="subtitle">AI, который ведёт тебя к карьере</p>
+            <p class="subtitle">AI that guides you to your career</p>
             
             <div class="links">
                 <a href="/docs" class="link">📚 API Documentation</a>
@@ -166,20 +165,20 @@ def read_root():
             
             <div class="features">
                 <div class="feature">
-                    <strong>🧠 AI-профориентация</strong><br>
-                    Персонализированный тест с рекомендациями на основе ИИ
+                    <strong>🧠 AI career assessment</strong><br>
+                    Personalized guidance with AI-powered recommendations
                 </div>
                 <div class="feature">
-                    <strong>🎯 Карьерные симуляции</strong><br>
-                    Практические задания для разных профессий
+                    <strong>🎯 Career simulations</strong><br>
+                    Hands-on practice for multiple career paths
                 </div>
                 <div class="feature">
-                    <strong>📜 Сертификаты</strong><br>
-                    Подтверждение прохождения с QR-кодом
+                    <strong>📜 Certificates</strong><br>
+                    Shareable proof of completion with QR codes
                 </div>
                 <div class="feature">
-                    <strong>📊 Аналитика</strong><br>
-                    Отслеживание прогресса и достижений
+                    <strong>📊 Analytics</strong><br>
+                    Track progress, goals, and achievements
                 </div>
             </div>
         </div>

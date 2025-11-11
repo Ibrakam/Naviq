@@ -34,10 +34,12 @@ class AssessmentQuestionModel(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     question = Column(Text, nullable=False)
-    type = Column(String(50), default="multiple_choice")
+    type = Column(String(50), default="choice")
+    role = Column(String(20), default="assistant")
+    display_order = Column(Integer, nullable=True)
     category = Column(String(50), nullable=True)
-    options = Column(JSON, nullable=False)  # [{"code": "A", "text": "..."}]
-    weights = Column(JSON, nullable=False)  # {"A": {"design": 2}, ...}
+    options = Column(JSON, nullable=True)  # [{"code": "A", "text": "..."}]
+    weights = Column(JSON, nullable=True)  # {"A": {"design": 2}, ...}
     is_active = Column(Boolean, default=True)
 
 
@@ -48,6 +50,7 @@ class AssessmentSession(Base):
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     status = Column(String(20), default="draft")  # draft, completed
     answers = Column(JSON, default=dict)
+    messages = Column(JSON, default=list)
     result = Column(JSON, default=dict)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     completed_at = Column(DateTime(timezone=True))

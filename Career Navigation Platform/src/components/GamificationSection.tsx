@@ -161,7 +161,7 @@ export function GamificationSection({ accessToken }: GamificationSectionProps) {
       <div className="mb-8">
         <h2 className="text-2xl font-bold mb-6 flex items-center gap-2 text-gray-900">
           <Trophy className="w-6 h-6 text-green-600" />
-          Твоя статистика
+          Your Statistics
         </h2>
 
         {/* Stats Cards */}
@@ -171,7 +171,7 @@ export function GamificationSection({ accessToken }: GamificationSectionProps) {
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <p className="text-gray-600 text-sm mb-1">Ваш уровень</p>
+                  <p className="text-gray-600 text-sm mb-1">Your Level</p>
                   <h3 className="text-4xl font-bold text-gray-900">
                     LVL {profile.stats.current_level}
                   </h3>
@@ -182,7 +182,7 @@ export function GamificationSection({ accessToken }: GamificationSectionProps) {
               </div>
               <div className="mb-2">
                 <div className="flex justify-between text-sm mb-2">
-                  <span className="text-gray-600">Прогресс</span>
+                  <span className="text-gray-600">Progress</span>
                   <span className="font-semibold text-gray-900">
                     {profile.level_progress.toFixed(0)}%
                   </span>
@@ -194,7 +194,7 @@ export function GamificationSection({ accessToken }: GamificationSectionProps) {
                   ></div>
                 </div>
                 <p className="text-xs text-gray-500 mt-2">
-                  Осталось {profile.next_level_points} XP до уровня{' '}
+                  {profile.next_level_points} XP remaining until level{' '}
                   {profile.stats.current_level + 1}
                 </p>
               </div>
@@ -206,7 +206,7 @@ export function GamificationSection({ accessToken }: GamificationSectionProps) {
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <p className="text-gray-600 text-sm mb-1">Очки</p>
+                  <p className="text-gray-600 text-sm mb-1">Points</p>
                   <h3 className="text-4xl font-bold text-gray-900">
                     {profile.stats.total_points.toLocaleString()}
                   </h3>
@@ -218,14 +218,14 @@ export function GamificationSection({ accessToken }: GamificationSectionProps) {
               <div className="space-y-3 pt-3 border-t border-gray-100">
                 <div className="flex items-center justify-between">
                   <span className="text-gray-600 text-sm">
-                    Симуляции завершено
+                    Simulations Completed
                   </span>
                   <span className="font-semibold text-gray-900">
                     {profile.stats.simulations_completed}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-600 text-sm">Сертификаты</span>
+                  <span className="text-gray-600 text-sm">Certificates</span>
                   <span className="font-semibold text-gray-900">
                     {profile.stats.certificates_earned}
                   </span>
@@ -239,7 +239,7 @@ export function GamificationSection({ accessToken }: GamificationSectionProps) {
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <p className="text-gray-600 text-sm mb-1">Серия дней</p>
+                  <p className="text-gray-600 text-sm mb-1">Day Streak</p>
                   <h3 className="text-4xl font-bold text-gray-900">
                     {profile.stats.streak_days}
                   </h3>
@@ -250,14 +250,14 @@ export function GamificationSection({ accessToken }: GamificationSectionProps) {
               </div>
               <p className="text-gray-600 text-sm">
                 {profile.stats.streak_days === 0
-                  ? 'Начните свою серию сегодня!'
+                  ? 'Start your streak today!'
                   : profile.stats.streak_days === 1
-                  ? 'Отличное начало!'
-                  : `${profile.stats.streak_days} дня подряд - так держать!`}
+                  ? 'Great start!'
+                  : `${profile.stats.streak_days} days in a row - keep it up!`}
               </p>
               {profile.stats.streak_days >= 7 && (
                 <div className="mt-3 text-xs bg-orange-50 text-orange-700 rounded-md px-3 py-1.5 inline-block border border-orange-200">
-                  🔥 Серия в огне!
+                  🔥 Streak on fire!
                 </div>
               )}
             </CardContent>
@@ -271,7 +271,7 @@ export function GamificationSection({ accessToken }: GamificationSectionProps) {
               <div className="flex items-center justify-between">
                 <CardTitle className="flex items-center gap-2 text-gray-900">
                   <Award className="w-5 h-5 text-green-600" />
-                  Недавние достижения
+                  Recent Achievements
                 </CardTitle>
                 {profile.achievements.length > uniqueRecentAchievements.length && (
                   <Button
@@ -280,7 +280,7 @@ export function GamificationSection({ accessToken }: GamificationSectionProps) {
                     onClick={() => setShowAllAchievements(true)}
                     className="text-green-600 hover:text-green-700 hover:bg-green-50"
                   >
-                    Показать все ({profile.achievements.length})
+                    Show All ({profile.achievements.length})
                   </Button>
                 )}
               </div>
@@ -299,7 +299,7 @@ export function GamificationSection({ accessToken }: GamificationSectionProps) {
                       {userAch.achievement.name}
                     </div>
                     <div className="text-xs text-green-600 mt-1 font-medium">
-                      +{userAch.points_earned} очков
+                      +{userAch.points_earned} points
                     </div>
                   </div>
                 ))}
@@ -315,7 +315,7 @@ export function GamificationSection({ accessToken }: GamificationSectionProps) {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-gray-900">
               <Trophy className="w-6 h-6 text-green-600" />
-              Все достижения ({uniqueAllAchievements.length})
+              All Achievements ({uniqueAllAchievements.length})
             </DialogTitle>
           </DialogHeader>
           <div className="mt-4">
@@ -342,11 +342,11 @@ export function GamificationSection({ accessToken }: GamificationSectionProps) {
                         <span className="font-semibold text-green-600">
                           +{userAch.points_earned}
                         </span>
-                        <span className="text-gray-600"> очков</span>
+                        <span className="text-gray-600"> points</span>
                       </div>
                       <div className="text-xs text-gray-500">
                         {new Date(userAch.earned_at).toLocaleDateString(
-                          'ru-RU'
+                          'en-US'
                         )}
                       </div>
                     </div>
@@ -356,17 +356,16 @@ export function GamificationSection({ accessToken }: GamificationSectionProps) {
             ) : (
               <div className="text-center py-12">
                 <Trophy className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-600">У вас пока нет достижений</p>
+                <p className="text-gray-600">You don't have any achievements yet</p>
                 <p className="text-sm text-gray-500 mt-2">
-                  Начните проходить симуляции, чтобы заработать первые
-                  достижения!
+                  Start completing simulations to earn your first achievements!
                 </p>
               </div>
             )}
           </div>
           <div className="mt-6 pt-4 border-t border-gray-200 flex items-center justify-between">
             <div className="text-sm text-gray-600">
-              Всего заработано очков:{' '}
+              Total points earned:{' '}
               <span className="font-semibold text-gray-900">
                 {uniqueAllAchievements.reduce(
                   (sum: number, ach: UserAchievement) => sum + ach.points_earned,
@@ -378,7 +377,7 @@ export function GamificationSection({ accessToken }: GamificationSectionProps) {
               onClick={() => setShowAllAchievements(false)}
               className="bg-green-500 hover:bg-green-600"
             >
-              Закрыть
+              Close
             </Button>
           </div>
         </DialogContent>

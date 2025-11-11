@@ -51,38 +51,6 @@ export default function App() {
     };
   }, []);
 
-  const handleGoogleAuth = async (token: string) => {
-    try {
-      const response = await fetch(buildApiUrl(apiRoutes.googleAuth), {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ token }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.detail || 'Google authentication failed');
-      }
-
-      setAccessToken(data.access_token);
-      setUser(data.user);
-      localStorage.setItem('naviq_access_token', data.access_token);
-      localStorage.setItem('naviq_user', JSON.stringify(data.user));
-
-      // Check if profile needs completion
-      if (data.needs_completion) {
-        setCurrentPage('complete-profile');
-      } else {
-        setCurrentPage('dashboard');
-      }
-    } catch (error: any) {
-      alert('Google authentication failed: ' + error.message);
-    }
-  };
-
   useEffect(() => {
     // Check for existing session in localStorage
     const storedToken = localStorage.getItem('naviq_access_token');
@@ -96,26 +64,6 @@ export default function App() {
       }
     }
 
-    // Handle Google OAuth redirect
-    const handleGoogleOAuthReturn = () => {
-      const hash = window.location.hash.substring(1);
-      const params = new URLSearchParams(hash);
-      const idToken = params.get('id_token');
-      const isRedirect = sessionStorage.getItem('google_auth_redirect');
-
-      if (idToken && isRedirect) {
-        sessionStorage.removeItem('google_auth_redirect');
-        sessionStorage.removeItem('google_auth_nonce');
-        
-        // Clean URL
-        window.history.replaceState({}, document.title, window.location.pathname);
-        
-        // Process the token
-        handleGoogleAuth(idToken);
-      }
-    };
-
-    handleGoogleOAuthReturn();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -237,7 +185,6 @@ export default function App() {
       {currentPage === 'login' && (
         <Login
           onLogin={handleLogin}
-          onGoogleAuth={handleGoogleAuth}
           onSignup={() => navigateTo('signup')}
           onBack={() => navigateTo('landing')}
         />
@@ -246,7 +193,6 @@ export default function App() {
       {currentPage === 'signup' && (
         <Signup
           onSignup={handleSignup}
-          onGoogleAuth={handleGoogleAuth}
           onLogin={() => navigateTo('login')}
           onBack={() => navigateTo('landing')}
         />

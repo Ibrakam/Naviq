@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Sparkles, Target, BookOpen, User, LogOut, LayoutDashboard, Shield, Trophy, ArrowRight, Clock, CheckCircle2, TrendingUp } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Sparkles, Target, BookOpen, User, LogOut, LayoutDashboard, Shield, Trophy, ArrowRight, Clock, CheckCircle2, TrendingUp, Menu } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
+import { useIsMobile } from './ui/use-mobile';
 import { apiRoutes, buildApiUrl } from '../utils/api';
 import { GamificationSection } from './GamificationSection';
 
@@ -16,6 +17,15 @@ export function Dashboard({ accessToken, user, onNavigate, onLogout }: Dashboard
   const [profile, setProfile] = useState<any>(null);
   const [simulations, setSimulations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const isMobile = useIsMobile();
+
+  useEffect(() => {
+    document.body.style.overflow = mobileMenuOpen ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
 
   useEffect(() => {
     // Check if user is authenticated
@@ -72,6 +82,43 @@ export function Dashboard({ accessToken, user, onNavigate, onLogout }: Dashboard
     }
   };
 
+  const navItems = useMemo(() => {
+    const items = [
+      {
+        key: 'dashboard',
+        label: 'Dashboard',
+        icon: LayoutDashboard,
+        description: 'Main overview',
+        action: () => onNavigate('dashboard'),
+      },
+      {
+        key: 'catalog',
+        label: 'Simulations',
+        icon: BookOpen,
+        description: 'Simulation catalog',
+        action: () => onNavigate('catalog'),
+      },
+      {
+        key: 'profile',
+        label: 'Profile',
+        icon: User,
+        description: 'Achievements and progress',
+        action: () => onNavigate('profile'),
+      },
+    ];
+
+    if (profile?.role === 'admin') {
+      items.push({
+        key: 'admin',
+        label: 'Admin',
+        icon: Shield,
+        description: 'Admin dashboard',
+        action: () => onNavigate('admin'),
+      });
+    }
+    return items;
+  }, [profile?.role, onNavigate]);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -79,7 +126,7 @@ export function Dashboard({ accessToken, user, onNavigate, onLogout }: Dashboard
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
             <Sparkles className="w-8 h-8 text-green-600" />
           </div>
-          <p className="text-gray-600">Загрузка...</p>
+          <p className="text-gray-600">Loading...</p>
         </div>
       </div>
     );
@@ -103,55 +150,133 @@ export function Dashboard({ accessToken, user, onNavigate, onLogout }: Dashboard
               <span className="text-xl">NAVIQ</span>
             </div>
 
-            <nav className="flex items-center gap-6">
-              <button
-                onClick={() => onNavigate('dashboard')}
-                className="flex items-center gap-2 text-gray-700 hover:text-green-600"
-              >
-                <LayoutDashboard className="w-5 h-5" />
-                Дашборд
-              </button>
-              <button
-                onClick={() => onNavigate('catalog')}
-                className="flex items-center gap-2 text-gray-700 hover:text-green-600"
-              >
-                <BookOpen className="w-5 h-5" />
-                Симуляции
-              </button>
-              <button
-                onClick={() => onNavigate('profile')}
-                className="flex items-center gap-2 text-gray-700 hover:text-green-600"
-              >
-                <User className="w-5 h-5" />
-                Профиль
-              </button>
-              {profile?.role === 'admin' && (
+            {/* Desktop Navigation - visible on desktop */}
+            {!isMobile && (
+              <nav className="flex items-center gap-6">
                 <button
-                  onClick={() => onNavigate('admin')}
-                  className="flex items-center gap-2 text-gray-700 hover:text-green-600"
+                  onClick={() => onNavigate('dashboard')}
+                  className="flex items-center gap-2 text-gray-700 hover:text-green-600 transition-colors"
                 >
-                  <Shield className="w-5 h-5" />
-                  Админ
+                  <LayoutDashboard className="w-5 h-5" />
+                  Dashboard
                 </button>
-              )}
-              <Button variant="ghost" onClick={onLogout}>
-                <LogOut className="w-4 h-4 mr-2" />
-                Выйти
+                <button
+                  onClick={() => onNavigate('catalog')}
+                  className="flex items-center gap-2 text-gray-700 hover:text-green-600 transition-colors"
+                >
+                  <BookOpen className="w-5 h-5" />
+                  Simulations
+                </button>
+                <button
+                  onClick={() => onNavigate('profile')}
+                  className="flex items-center gap-2 text-gray-700 hover:text-green-600 transition-colors"
+                >
+                  <User className="w-5 h-5" />
+                  Profile
+                </button>
+                {profile?.role === 'admin' && (
+                  <button
+                    onClick={() => onNavigate('admin')}
+                    className="flex items-center gap-2 text-gray-700 hover:text-green-600 transition-colors"
+                  >
+                    <Shield className="w-5 h-5" />
+                    Admin
+                  </button>
+                )}
+                <Button variant="ghost" onClick={onLogout}>
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Logout
+                </Button>
+              </nav>
+            )}
+
+            {/* Mobile Burger Menu - visible only on mobile */}
+            {isMobile && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-gray-900 hover:bg-gray-100"
+                onClick={() => setMobileMenuOpen((prev) => !prev)}
+                aria-label="Toggle menu"
+              >
+                <Menu className="w-6 h-6 text-gray-900" />
               </Button>
-            </nav>
+            )}
           </div>
         </div>
       </header>
+
+      {/* Mobile Menu Overlay */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-200"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          <div className="absolute top-0 bottom-0 right-0 w-[78vw] max-w-sm bg-white shadow-2xl rounded-l-3xl border-l border-gray-100 transition-all duration-300 ease-out flex flex-col" style={{ right: "0" }}>
+            <div className="px-6 py-6 flex items-center justify-between border-b border-gray-100">
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center text-white font-bold">
+                  NQ
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Signed in as</p>
+                  <p className="text-base font-semibold text-gray-900 truncate max-w-[150px]">
+                    {profile?.name || 'Student'}
+                  </p>
+                </div>
+              </div>
+              <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(false)} aria-label="Close menu">
+                <Menu className="w-5 h-5 rotate-90 text-gray-500" />
+              </Button>
+            </div>
+            <nav className="px-4 py-6 space-y-3 flex-1 overflow-y-auto">
+              {navItems.map((item) => (
+                <button
+                  key={item.key}
+                  onClick={() => {
+                    item.action();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full flex items-center gap-4 rounded-2xl border border-gray-100 bg-white px-4 py-4 text-left shadow-sm hover:border-green-200 hover:bg-green-50 hover:text-green-700 transition-all"
+                >
+                  <div className="w-10 h-10 rounded-xl bg-green-100 text-green-600 flex items-center justify-center">
+                    <item.icon className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold">{item.label}</p>
+                    <p className="text-xs text-gray-500">{item.description}</p>
+                  </div>
+                  <ArrowRight className="ml-auto w-4 h-4 text-gray-400" />
+                </button>
+              ))}
+              <div className="pt-4 mt-6 border-t border-gray-100">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start text-red-500 hover:bg-red-50"
+                  onClick={() => {
+                    onLogout();
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Logout
+                </Button>
+              </div>
+            </nav>
+          </div>
+        </div>
+      )}
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Welcome Section */}
         <div className="mb-8">
           <h1 className="text-3xl mb-2">
-            Привет, {profile?.name || 'пользователь'}! 👋
+            Hello, {profile?.name || 'user'}! 👋
           </h1>
           <p className="text-gray-600">
-        Добро пожаловать в твой персональный навигатор карьеры
+        Welcome to your personal career navigator
       </p>
     </div>
 
@@ -173,12 +298,12 @@ export function Dashboard({ accessToken, user, onNavigate, onLogout }: Dashboard
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-2">
                       <h2 className="text-xl md:text-2xl font-bold text-gray-900">
-                        Результаты профориентации готовы
+                        Career Assessment Results Ready
                       </h2>
                       <TrendingUp className="w-5 h-5 md:w-6 md:h-6 text-green-600 flex-shrink-0" />
                     </div>
                     <p className="text-gray-600 text-sm md:text-base leading-relaxed">
-                      Посмотри подробные рекомендации и персональный план действий.
+                      View detailed recommendations and your personal action plan.
                     </p>
                   </div>
                 </div>
@@ -190,7 +315,7 @@ export function Dashboard({ accessToken, user, onNavigate, onLogout }: Dashboard
                     size="lg"
                     className="w-full md:w-auto bg-green-500 hover:bg-green-600 text-white shadow-md hover:shadow-lg transition-all px-6 py-6 md:py-3 text-base font-semibold rounded-lg"
                   >
-                    Открыть результаты
+                    View Results
                     <ArrowRight className="w-5 h-5 ml-2" />
                   </Button>
                 </div>
@@ -215,22 +340,22 @@ export function Dashboard({ accessToken, user, onNavigate, onLogout }: Dashboard
               </div>
               <div>
                 <h2 className="text-xl font-semibold text-gray-900">
-                  Пройди AI-профориентацию
+                  Take AI Career Assessment
                 </h2>
                 <p className="text-sm text-green-600 font-medium mt-1">
-                  +30 очков
+                  +30 points
                 </p>
               </div>
             </div>
             <p className="text-gray-600 mb-4">
-              Ответь на 20 вопросов и получи персональные рекомендации от искусственного интеллекта
+              Answer 20 questions and get personalized recommendations from artificial intelligence
             </p>
             <Button
               onClick={() => onNavigate('assessment')}
               className="bg-green-500 hover:bg-green-600 text-white shadow-sm hover:shadow-md transition-all"
             >
               <Target className="w-4 h-4 mr-2" />
-              Начать тест
+              Start Test
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </div>
@@ -246,7 +371,7 @@ export function Dashboard({ accessToken, user, onNavigate, onLogout }: Dashboard
         {/* Recommended Simulations */}
         {profile?.assessmentCompleted && recommendedSimulations.length > 0 && (
           <div className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Рекомендовано для тебя</h2>
+            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Recommended for You</h2>
             <div className="grid md:grid-cols-3 gap-6">
               {recommendedSimulations.map((sim) => (
                 <Card key={sim.id} className="p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all">
@@ -271,7 +396,7 @@ export function Dashboard({ accessToken, user, onNavigate, onLogout }: Dashboard
                       onClick={() => onNavigate('catalog')}
                       className="text-green-600 hover:text-green-700 hover:bg-green-50"
                     >
-                      Начать
+                      Start
                       <ArrowRight className="w-4 h-4 ml-1" />
                     </Button>
                   </div>
@@ -288,17 +413,17 @@ export function Dashboard({ accessToken, user, onNavigate, onLogout }: Dashboard
               <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                 <BookOpen className="w-5 h-5 text-green-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900">Исследуй симуляции</h3>
+              <h3 className="text-xl font-semibold text-gray-900">Explore Simulations</h3>
             </div>
             <p className="text-gray-600 mb-4">
-              Просмотри весь каталог карьерных симуляций и выбери интересующее направление
+              Browse the entire catalog of career simulations and choose your area of interest
             </p>
             <Button
               onClick={() => onNavigate('catalog')}
               variant="outline"
               className="border-gray-200 hover:bg-green-50 hover:border-green-200 hover:text-green-700"
             >
-              Открыть каталог
+              Open Catalog
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </Card>
@@ -308,17 +433,17 @@ export function Dashboard({ accessToken, user, onNavigate, onLogout }: Dashboard
               <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                 <User className="w-5 h-5 text-green-600" />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900">Твой профиль</h3>
+              <h3 className="text-xl font-semibold text-gray-900">Your Profile</h3>
             </div>
             <p className="text-gray-600 mb-4">
-              Посмотри свои достижения, пройденные симуляции и сертификаты
+              View your achievements, completed simulations, and certificates
             </p>
             <Button
               onClick={() => onNavigate('profile')}
               variant="outline"
               className="border-gray-200 hover:bg-green-50 hover:border-green-200 hover:text-green-700"
             >
-              Открыть профиль
+              Open Profile
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </Card>

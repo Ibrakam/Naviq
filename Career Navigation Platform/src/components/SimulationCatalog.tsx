@@ -21,7 +21,7 @@ const trackIcons: any = {
 };
 
 const tracks = [
-  { id: 'all', name: 'Все направления' },
+  { id: 'all', name: 'All Tracks' },
   { id: 'frontend', name: 'Frontend' },
   { id: 'backend', name: 'Backend' },
   { id: 'data', name: 'Data Analytics' },
@@ -80,7 +80,7 @@ export function SimulationCatalog({ accessToken, onSelectSimulation, onBack }: S
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
             <BookOpen className="w-8 h-8 text-green-600" />
           </div>
-          <p className="text-gray-600">Загрузка симуляций...</p>
+          <p className="text-gray-600">Loading simulations...</p>
         </div>
       </div>
     );
@@ -93,12 +93,12 @@ export function SimulationCatalog({ accessToken, onSelectSimulation, onBack }: S
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <Button variant="ghost" onClick={onBack} className="mb-4">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Назад к дашборду
+            Back to Dashboard
           </Button>
 
-          <h1 className="text-3xl mb-2">Каталог симуляций</h1>
+          <h1 className="text-3xl mb-2">Simulation Catalog</h1>
           <p className="text-gray-600">
-            Выбери симуляцию и получи реальный опыт работы в профессии
+            Choose a simulation and get real work experience in your profession
           </p>
         </div>
       </div>
@@ -112,7 +112,7 @@ export function SimulationCatalog({ accessToken, onSelectSimulation, onBack }: S
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
               <Input
                 type="text"
-                placeholder="Поиск симуляций..."
+                placeholder="Search simulations..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-10"
@@ -140,7 +140,7 @@ export function SimulationCatalog({ accessToken, onSelectSimulation, onBack }: S
             >
               {difficulties.map((diff) => (
                 <option key={diff} value={diff}>
-                  {diff === 'All' ? 'Все уровни' : diff}
+                  {diff === 'All' ? 'All Levels' : diff}
                 </option>
               ))}
             </select>
@@ -159,9 +159,9 @@ export function SimulationCatalog({ accessToken, onSelectSimulation, onBack }: S
         {filteredSimulations.length === 0 ? (
           <div className="text-center py-12">
             <Filter className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl mb-2">Симуляции не найдены</h3>
+            <h3 className="text-xl mb-2">No simulations found</h3>
             <p className="text-gray-600">
-              Попробуй изменить фильтры или поисковый запрос
+              Try changing the filters or search query
             </p>
           </div>
         ) : (
@@ -205,7 +205,7 @@ export function SimulationCatalog({ accessToken, onSelectSimulation, onBack }: S
                       {sim.duration}
                     </span>
                     <span className="text-green-600">
-                      {sim.steps?.length || 0} заданий
+                      {sim.steps?.length || 0} tasks
                     </span>
                   </div>
                 </Card>

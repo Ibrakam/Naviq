@@ -11,7 +11,7 @@ import {
   ListChecks,
 } from 'lucide-react';
 import { Button } from './ui/button';
-import { Card } from './ui/card';
+import { Textarea } from './ui/textarea';
 import { apiRoutes, buildApiUrl } from '../utils/api';
 
 interface AssessmentProps {
@@ -60,10 +60,10 @@ export function CareerResultPage({ results, onComplete }: CareerResultProps) {
   }, [results.plan, results.development_plan]);
 
   const recommendedSteps = [
-    `Добавь курс по направлению «${primaryTrack?.name || 'выбранному треку'}»`,
-    'Пройди симуляцию «Call с клиентом»',
-    'Заполни профиль на 100%',
-    'Подготовь вопросы для ментора',
+    `Add a course in the "${primaryTrack?.name || 'selected track'}" direction`,
+    'Complete the "Client Call" simulation',
+    'Complete your profile to 100%',
+    'Prepare questions for your mentor',
   ];
 
   return (
@@ -76,13 +76,13 @@ export function CareerResultPage({ results, onComplete }: CareerResultProps) {
               <CheckCircle2 className="w-5 h-5 text-green-600" />
             </div>
             <span className="inline-flex items-center gap-2 rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
-              Результат готов
+              Results Ready
             </span>
           </div>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">Твои карьерные результаты</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">Your Career Results</h1>
             <p className="text-gray-600 text-sm md:text-base leading-relaxed">
-              {primaryTrack?.reason || 'Ты чаще выбираешь сценарии про людей и коммуникацию. Мы подобрали треки, которые помогут закрепить это в карьере.'}
+              {primaryTrack?.reason || 'You often choose scenarios about people and communication. We have selected tracks that will help you solidify this in your career.'}
             </p>
           </div>
         </section>
@@ -90,9 +90,9 @@ export function CareerResultPage({ results, onComplete }: CareerResultProps) {
         {/* Top cards */}
         <section className="grid gap-6 md:grid-cols-3 mb-10">
           <div className="rounded-xl border-2 border-gray-200 bg-white p-6 shadow-md hover:shadow-lg transition-all">
-            <p className="text-xs uppercase tracking-wider text-gray-500 mb-2 font-medium">Основной трек</p>
+            <p className="text-xs uppercase tracking-wider text-gray-500 mb-2 font-medium">Primary Track</p>
             <h3 className="text-xl font-bold text-gray-900 mb-1">{primaryTrack?.name || '—'}</h3>
-            <p className="text-sm text-gray-600">лучшее совпадение</p>
+            <p className="text-sm text-gray-600">best match</p>
             {primaryTrack?.match_percentage && (
               <div className="mt-4 pt-4 border-t border-gray-100">
                 <div className="flex items-center gap-2">
@@ -108,9 +108,9 @@ export function CareerResultPage({ results, onComplete }: CareerResultProps) {
             )}
           </div>
           <div className="rounded-xl border-2 border-gray-200 bg-white p-6 shadow-md hover:shadow-lg transition-all">
-            <p className="text-xs uppercase tracking-wider text-gray-500 mb-2 font-medium">Альтернатива</p>
-            <h3 className="text-xl font-bold text-gray-900 mb-1">{secondaryTrack?.name || 'Скоро определим'}</h3>
-            <p className="text-sm text-gray-600">второй по силе трек</p>
+            <p className="text-xs uppercase tracking-wider text-gray-500 mb-2 font-medium">Alternative</p>
+            <h3 className="text-xl font-bold text-gray-900 mb-1">{secondaryTrack?.name || 'To be determined'}</h3>
+            <p className="text-sm text-gray-600">second strongest track</p>
             {secondaryTrack?.match_percentage && (
               <div className="mt-4 pt-4 border-t border-gray-100">
                 <div className="flex items-center gap-2">
@@ -127,15 +127,15 @@ export function CareerResultPage({ results, onComplete }: CareerResultProps) {
           </div>
           <div className="rounded-xl border-2 border-green-200 bg-gradient-to-br from-green-50 to-white p-6 shadow-md hover:shadow-lg transition-all flex flex-col justify-between">
             <div>
-              <p className="text-xs uppercase tracking-wider text-gray-500 mb-2 font-medium">Следующий шаг</p>
-              <h3 className="text-xl font-bold text-gray-900 mb-1">Пройди первую симуляцию</h3>
-              <p className="text-sm text-gray-600">закрепи результат практикой</p>
+              <p className="text-xs uppercase tracking-wider text-gray-500 mb-2 font-medium">Next Step</p>
+              <h3 className="text-xl font-bold text-gray-900 mb-1">Complete Your First Simulation</h3>
+              <p className="text-sm text-gray-600">reinforce results with practice</p>
             </div>
             <Button
               onClick={onComplete}
               className="mt-6 w-full bg-green-500 hover:bg-green-600 text-white shadow-md hover:shadow-lg transition-all"
             >
-              Перейти к симуляциям
+              Go to Simulations
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </div>
@@ -147,21 +147,21 @@ export function CareerResultPage({ results, onComplete }: CareerResultProps) {
             <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
               <Target className="w-5 h-5 text-green-600" />
             </div>
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Твои карьерные направления</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Your Career Directions</h2>
           </div>
           <div className="grid gap-6 md:grid-cols-2">
             {primaryTrack && (
               <div className="rounded-lg border-2 border-green-300 bg-white p-6 md:p-8 hover:shadow-md transition-all">
                 <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1.5 text-xs font-semibold text-green-700 mb-4">
-                  Лучшее совпадение
+                  Best Match
                 </span>
                 <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-3">{primaryTrack.name}</h3>
                 <p className="text-sm md:text-base text-gray-600 leading-relaxed mb-5">
-                  {primaryTrack.reason || 'Ты выбираешь варианты про скорость, стабильность и понятный результат.'}
+                  {primaryTrack.reason || 'You choose options about speed, stability, and clear results.'}
                 </p>
                 {primaryTrack.skills && primaryTrack.skills.length > 0 && (
                   <div className="mt-5 pt-5 border-t border-gray-100">
-                    <p className="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wider">Навыки</p>
+                    <p className="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wider">Skills</p>
                     <div className="flex flex-wrap gap-2">
                       {primaryTrack.skills.slice(0, 3).map((skill: string, idx: number) => (
                         <span key={idx} className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-md text-xs font-medium">
@@ -176,15 +176,15 @@ export function CareerResultPage({ results, onComplete }: CareerResultProps) {
             {secondaryTrack && (
               <div className="rounded-lg border-2 border-gray-300 bg-white p-6 md:p-8 hover:shadow-md transition-all">
                 <span className="inline-flex items-center rounded-full bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-700 mb-4">
-                  Тебе также подойдёт
+                  Also Suitable for You
                 </span>
                 <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-3">{secondaryTrack.name}</h3>
                 <p className="text-sm md:text-base text-gray-600 leading-relaxed mb-5">
-                  {secondaryTrack.reason || 'Ты думаешь категориями рынка, дедлайнов и влияния на людей.'}
+                  {secondaryTrack.reason || 'You think in terms of market, deadlines, and impact on people.'}
                 </p>
                 {secondaryTrack.skills && secondaryTrack.skills.length > 0 && (
                   <div className="mt-5 pt-5 border-t border-gray-100">
-                    <p className="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wider">Навыки</p>
+                    <p className="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wider">Skills</p>
                     <div className="flex flex-wrap gap-2">
                       {secondaryTrack.skills.slice(0, 3).map((skill: string, idx: number) => (
                         <span key={idx} className="px-3 py-1.5 bg-gray-100 text-gray-700 rounded-md text-xs font-medium">
@@ -206,7 +206,7 @@ export function CareerResultPage({ results, onComplete }: CareerResultProps) {
               <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
                 <GraduationCap className="w-5 h-5 text-green-600" />
               </div>
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Рекомендованные курсы</h2>
+              <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Recommended Courses</h2>
             </div>
             <div className="grid gap-4 md:grid-cols-2">
               {courses.map((course: any, idx: number) => (
@@ -225,7 +225,7 @@ export function CareerResultPage({ results, onComplete }: CareerResultProps) {
             <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
               <ListChecks className="w-5 h-5 text-green-600" />
             </div>
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Рекомендованные шаги</h2>
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Recommended Steps</h2>
           </div>
           <div className="bg-white rounded-2xl border border-gray-200 p-6 md:p-8">
             <div className="grid gap-4 md:grid-cols-2">
@@ -248,21 +248,94 @@ export function CareerResultPage({ results, onComplete }: CareerResultProps) {
   );
 }
 
-export function Assessment({ accessToken, onComplete, onBack }: AssessmentProps) {
-  const [questions, setQuestions] = useState<Question[]>([]);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [answers, setAnswers] = useState<any[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [results, setResults] = useState<any>(null);
+type ChatMessage = {
+  role: 'assistant' | 'user' | 'system';
+  content: string;
+  question_id?: number;
+  type?: 'text' | 'choice';
+  options?: AssessmentOption[];
+  category?: string;
+};
 
-  useEffect(() => {
-    loadQuestions();
+type ChatQuestion = {
+  id: number;
+  role: 'assistant' | 'system';
+  question_text: string;
+  type: 'text' | 'choice';
+  options?: AssessmentOption[];
+  category?: string;
+  order?: number;
+};
+
+type ChatProgress = {
+  current: number;
+  total: number;
+};
+
+interface ChatSessionResponse {
+  session_id: number;
+  status: 'draft' | 'completed';
+  messages: ChatMessage[];
+  progress: ChatProgress;
+  result?: any;
+  next_question?: ChatQuestion | null;
+}
+
+const normalizeResultPayload = (data: any) => ({
+  explanation: data.top_tracks?.[0]?.reason || 'Analysis completed',
+  primaryTrack: data.primary_track || data.top_tracks?.[0]?.track_id,
+  tracks:
+    data.top_tracks?.map((track: any, index: number) => ({
+      id: track.track_id || track.name.toLowerCase().replace(/\s+/g, '_'),
+      name: track.name,
+      match: track.match_percentage,
+      description: track.description,
+      reason: track.reason,
+      badge: index === 0 ? 'primary' : 'secondary',
+    })) || [],
+  suggestedCourses:
+    data.courses?.map((course: any) => ({
+      title: course.name,
+      platform: course.platform,
+    })) || [],
+  plan:
+    Object.entries(data.development_plan || {}).map(([day, task]) => ({
+      day,
+      task,
+    })) || [],
+});
+
+export function Assessment({ accessToken, onComplete, onBack }: AssessmentProps) {
+  const [sessionId, setSessionId] = useState<number | null>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [currentQuestion, setCurrentQuestion] = useState<ChatQuestion | null>(null);
+  const [progress, setProgress] = useState<ChatProgress>({ current: 0, total: 0 });
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSending, setIsSending] = useState(false);
+  const [assistantThinking, setAssistantThinking] = useState(false);
+  const [textAnswer, setTextAnswer] = useState('');
+  const [results, setResults] = useState<any>(null);
+  const chatEndRef = React.useRef<HTMLDivElement | null>(null);
+
+  const scrollToBottom = React.useCallback(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);
 
-  const loadQuestions = async () => {
+  useEffect(() => {
+    loadOrCreateSession();
+  }, []);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, assistantThinking, scrollToBottom]);
+
+  const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+  const randomAssistantDelay = () => 400 + Math.floor(Math.random() * 300);
+
+  const loadOrCreateSession = async () => {
+    setIsLoading(true);
     try {
-      const response = await fetch(buildApiUrl(apiRoutes.assessmentQuestions), {
+      const response = await fetch(buildApiUrl(apiRoutes.assessmentSessionCurrent), {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -271,105 +344,94 @@ export function Assessment({ accessToken, onComplete, onBack }: AssessmentProps)
       });
 
       if (!response.ok) {
-        throw new Error('Failed to load questions');
+        throw new Error('Failed to load assessment session');
       }
 
-      const data = await response.json();
-      setQuestions(data);
-      setIsLoading(false);
+      const data: ChatSessionResponse = await response.json();
+      setSessionId(data.session_id);
+      setMessages(data.messages || []);
+      setProgress(data.progress || { current: 0, total: data.next_question ? data.next_question.order || 0 : 0 });
+
+      if (data.status === 'completed' && data.result) {
+        setResults(normalizeResultPayload(data.result));
+        setCurrentQuestion(null);
+      } else {
+        setResults(null);
+        setCurrentQuestion(data.next_question || null);
+      }
     } catch (error) {
-      console.error('Failed to load questions:', error);
-      alert('Ошибка при загрузке вопросов');
+      console.error('Failed to load session:', error);
+      alert('Unable to load the assessment. Please try again.');
+    } finally {
       setIsLoading(false);
     }
   };
 
-  const handleAnswer = (value: number | string) => {
-    const currentQ = questions[currentQuestion];
-    const newAnswer = {
-      questionId: currentQ.id,
-      value: value,
-      category: currentQ.category,
+  const sendAnswer = async (answer: string) => {
+    if (!currentQuestion) return;
+
+    const optimisticMessage: ChatMessage = {
+      role: 'user',
+      question_id: currentQuestion.id,
+      content: answer,
+      type: currentQuestion.type,
     };
 
-    // Update or add answer
-    const updatedAnswers = answers.filter(a => a.questionId !== currentQ.id);
-    updatedAnswers.push(newAnswer);
-    setAnswers(updatedAnswers);
+    setMessages((prev) => [...prev, optimisticMessage]);
+    setIsSending(true);
+    setAssistantThinking(true);
+    setTextAnswer('');
 
-    if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-    } else {
-      submitAssessment(updatedAnswers);
-    }
-  };
-
-  const submitAssessment = async (finalAnswers: any[]) => {
-    setIsSubmitting(true);
     try {
-      // Convert to backend format
-      const answersArray = finalAnswers.map(answer => ({
-        question_id: answer.questionId,
-        answer: answer.value,
-      }));
-
-      const response = await fetch(
-        buildApiUrl(apiRoutes.assessmentSubmit),
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-          },
-          body: JSON.stringify({ answers: answersArray }),
-        }
-      );
+      const response = await fetch(buildApiUrl(apiRoutes.assessmentChatAnswer), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          session_id: sessionId,
+          question_id: currentQuestion.id,
+          user_answer: answer,
+        }),
+      });
 
       if (!response.ok) {
-        throw new Error('Failed to submit assessment');
+        throw new Error('Failed to save answer');
       }
 
-      const data = await response.json();
-      // Transform backend response to match frontend expectations
-      setResults({
-        explanation: data.top_tracks?.[0]?.reason || 'Анализ завершен',
-        primaryTrack: data.primary_track || data.top_tracks?.[0]?.track_id,
-        tracks:
-          data.top_tracks?.map((track: any, index: number) => ({
-            id: track.track_id || track.name.toLowerCase().replace(/\s+/g, '_'),
-            name: track.name,
-            match: track.match_percentage,
-            description: track.description,
-            reason: track.reason,
-            badge: index === 0 ? 'primary' : 'secondary',
-          })) || [],
-        suggestedCourses:
-          data.courses?.map((course: any) => ({
-            title: course.name,
-            platform: course.platform,
-          })) || [],
-        plan:
-          Object.entries(data.development_plan || {}).map(([day, task]) => ({
-            day,
-            task,
-          })) || [],
-      });
+      const data: ChatSessionResponse = await response.json();
+      await delay(randomAssistantDelay());
+
+      setSessionId(data.session_id);
+      setMessages(data.messages || []);
+      setProgress((prev) => data.progress || prev);
+      setCurrentQuestion(data.next_question || null);
+
+      if (data.result) {
+        setResults(normalizeResultPayload(data.result));
+      }
     } catch (error) {
-      console.error('Failed to submit assessment:', error);
-      alert('Ошибка при отправке теста');
+      console.error('Failed to submit chat answer:', error);
+      setMessages((prev) => prev.slice(0, -1));
+      alert('Failed to send your answer. Please try again.');
     } finally {
-      setIsSubmitting(false);
+      setIsSending(false);
+      setAssistantThinking(false);
     }
   };
 
-  const goBack = () => {
-    if (currentQuestion > 0) {
-      setCurrentQuestion(currentQuestion - 1);
-      setAnswers(answers.slice(0, -1));
-    } else {
-      onBack();
-    }
+  const handleTextSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!textAnswer.trim() || isSending || assistantThinking) return;
+    sendAnswer(textAnswer.trim());
   };
+
+  const answeredCount = progress.current || 0;
+  const totalQuestions = progress.total || (currentQuestion ? answeredCount + 1 : answeredCount);
+  const displayQuestionNumber = currentQuestion ? Math.min(answeredCount + 1, totalQuestions) : answeredCount;
+  const completionPercent =
+    totalQuestions > 0 ? Math.min((answeredCount / totalQuestions) * 100, 100) : 0;
 
   if (isLoading) {
     return (
@@ -378,37 +440,8 @@ export function Assessment({ accessToken, onComplete, onBack }: AssessmentProps)
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
             <Sparkles className="w-10 h-10 text-green-600" />
           </div>
-          <h2 className="text-2xl mb-2">Загрузка вопросов...</h2>
-        </div>
-      </div>
-    );
-  }
-
-  if (questions.length === 0) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <h2 className="text-2xl mb-2">Вопросы не найдены</h2>
-          <Button onClick={onBack} variant="outline" className="mt-4">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Назад
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  if (isSubmitting) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
-            <Sparkles className="w-10 h-10 text-green-600" />
-          </div>
-          <h2 className="text-2xl mb-2">Анализируем твои ответы...</h2>
-          <p className="text-gray-600">
-            AI создаёт персональные рекомендации
-          </p>
+          <h2 className="text-2xl mb-2">Preparing your chat assistant...</h2>
+          <p className="text-gray-600">Almost ready</p>
         </div>
       </div>
     );
@@ -418,82 +451,87 @@ export function Assessment({ accessToken, onComplete, onBack }: AssessmentProps)
     return <CareerResultPage results={results} onComplete={onComplete} />;
   }
 
-  const currentQ = questions[currentQuestion];
-  const currentAnswer = answers.find(a => a.questionId === currentQ.id);
-
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-        <Button variant="ghost" onClick={goBack} className="mb-8">
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          {currentQuestion === 0 ? 'Назад' : 'Предыдущий вопрос'}
-        </Button>
-
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <span className="text-sm text-gray-600">
-              Вопрос {currentQuestion + 1} из {questions.length}
-            </span>
-            <span className="text-sm text-gray-600">
-              {Math.round(((currentQuestion + 1) / questions.length) * 100)}%
-            </span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div
-              className="bg-green-500 h-2 rounded-full transition-all"
-              style={{
-                width: `${((currentQuestion + 1) / questions.length) * 100}%`,
-              }}
-            />
+    <div className="min-h-screen bg-gray-50 py-8 md:py-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        <div className="flex items-center justify-between">
+          <Button variant="ghost" onClick={onBack}>
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </Button>
+          <div className="w-full max-w-sm ml-6">
+            <div className="flex items-center justify-between text-sm text-gray-600 mb-2">
+              <span>Question {Math.max(displayQuestionNumber, 1)} of {Math.max(totalQuestions, 1)}</span>
+              <span>{Math.round(completionPercent)}%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div
+                className="bg-green-500 h-2 rounded-full transition-all"
+                style={{ width: `${completionPercent}%` }}
+              />
+            </div>
           </div>
         </div>
 
-        <Card className="p-8">
-          <h2 className="text-2xl mb-8">
-            {currentQ.question}
-          </h2>
-
-          <div className="space-y-3">
-            {currentQ.type === 'likert' ? (
-              // Likert scale - fixed buttons with values 1-5
-              [
-              { value: 5, label: 'Полностью согласен' },
-              { value: 4, label: 'Скорее согласен' },
-              { value: 3, label: 'Нейтрально' },
-              { value: 2, label: 'Скорее не согласен' },
-              { value: 1, label: 'Совершенно не согласен' },
-            ].map((option) => (
-              <button
-                key={option.value}
-                onClick={() => handleAnswer(option.value)}
-                  className={`w-full p-4 text-left border-2 rounded-lg transition-all ${
-                    currentAnswer?.value === option.value
-                      ? 'border-green-500 bg-green-50'
-                      : 'border-gray-200 hover:border-green-500 hover:bg-green-50'
-                  }`}
-              >
-                {option.label}
-              </button>
-              ))
-            ) : currentQ.type === 'multiple_choice' ? (
-              // Multiple choice questions
-              currentQ.options?.map((option) => (
-                <button
-                  key={option.code}
-                  onClick={() => handleAnswer(option.code)}
-                  className={`w-full p-4 text-left border-2 rounded-lg transition-all ${
-                    currentAnswer?.value === option.code
-                      ? 'border-green-500 bg-green-50'
-                      : 'border-gray-200 hover:border-green-500 hover:bg-green-50'
-                  }`}
-                >
-                  <span className="font-semibold mr-2">{option.code}.</span>
-                  {option.text}
-                </button>
-              ))
-            ) : null}
+        <div className="bg-white border border-gray-200 rounded-3xl shadow-sm p-4 sm:p-6 h-[70vh] flex flex-col">
+          <div className="flex-1 overflow-y-auto space-y-4 pr-2">
+            {messages.map((message, index) => {
+              const isUser = message.role === 'user';
+              return (
+                <div key={`${message.question_id}-${index}-${message.role}`} className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
+                  <div
+                    className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm shadow transition-all ${
+                      isUser
+                        ? 'bg-green-500 text-white rounded-br-sm'
+                        : 'bg-white border border-gray-200 text-gray-900 rounded-bl-sm'
+                    }`}
+                  >
+                    <p className="whitespace-pre-line leading-relaxed">{message.content}</p>
+                  </div>
+                </div>
+              );
+            })}
+            {assistantThinking && (
+              <div className="flex justify-start">
+                <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3 text-sm text-gray-500 shadow">
+                  <span className="inline-flex items-center gap-1">
+                    Assistant is thinking
+                    <span className="flex gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-bounce" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-bounce delay-100" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-bounce delay-200" />
+                    </span>
+                  </span>
+                </div>
+              </div>
+            )}
+            <div ref={chatEndRef} />
           </div>
-        </Card>
+
+          <div className="border-t border-gray-100 pt-4 mt-4">
+            {currentQuestion ? (
+              <form onSubmit={handleTextSubmit} className="flex flex-col sm:flex-row gap-3">
+                <Textarea
+                  value={textAnswer}
+                  onChange={(event) => setTextAnswer(event.target.value)}
+                  placeholder="Type your answer..."
+                  disabled={isSending || assistantThinking}
+                  className="flex-1 resize-none"
+                  rows={3}
+                />
+                <Button
+                  type="submit"
+                  className="self-end sm:self-stretch sm:w-40 bg-green-500 hover:bg-green-600"
+                  disabled={isSending || assistantThinking || !textAnswer.trim()}
+                >
+                    Send
+                </Button>
+              </form>
+            ) : (
+              <p className="text-sm text-gray-500 text-center">Fetching the next question...</p>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

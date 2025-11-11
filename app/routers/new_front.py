@@ -184,7 +184,7 @@ def supabase_simulations(
     )
     return {
         "items": [_serialize_simulation(sim) for sim in simulations],
-        "message": "Остальные симуляции ещё в разработке",
+        "message": "Additional simulations are still in development",
         "more_available": False,
     }
 

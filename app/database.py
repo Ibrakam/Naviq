@@ -22,15 +22,18 @@ def ensure_additional_columns():
     if engine.dialect.name != "sqlite":
         return
     with engine.connect() as connection:
+        # Helper to fetch column names
+        def _columns(table: str) -> set[str]:
+            result = connection.execute(text(f"PRAGMA table_info('{table}')"))
+            return {row[1] for row in result.fetchall()}
+
         # Check and add company column to simulations
-        result = connection.execute(text("PRAGMA table_info('simulations')"))
-        columns = {row[1] for row in result.fetchall()}
-        if "company" not in columns:
+        simulation_columns = _columns("simulations")
+        if "company" not in simulation_columns:
             connection.execute(text("ALTER TABLE simulations ADD COLUMN company VARCHAR(100)"))
         
         # Check and add new columns to users table
-        result = connection.execute(text("PRAGMA table_info('users')"))
-        user_columns = {row[1] for row in result.fetchall()}
+        user_columns = _columns("users")
         
         if "google_id" not in user_columns:
             connection.execute(text("ALTER TABLE users ADD COLUMN google_id VARCHAR(255)"))
@@ -47,6 +50,20 @@ def ensure_additional_columns():
         
         if "graduation_date" not in user_columns:
             connection.execute(text("ALTER TABLE users ADD COLUMN graduation_date DATETIME"))
+
+        # Assessment enhancements
+        question_columns = _columns("assessment_questions")
+        if "role" not in question_columns:
+            connection.execute(
+                text("ALTER TABLE assessment_questions ADD COLUMN role VARCHAR(20) DEFAULT 'assistant'")
+            )
+        if "display_order" not in question_columns:
+            connection.execute(text("ALTER TABLE assessment_questions ADD COLUMN display_order INTEGER"))
+
+        session_columns = _columns("assessment_sessions")
+        if "messages" not in session_columns:
+            # SQLite stores JSON as TEXT; FastAPI/SQLAlchemy handle serialization
+            connection.execute(text("ALTER TABLE assessment_sessions ADD COLUMN messages TEXT"))
         
         connection.commit()
 

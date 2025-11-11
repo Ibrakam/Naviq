@@ -55,12 +55,12 @@ export function AssessmentResults({
           },
         });
         if (!response.ok) {
-          throw new Error('Не удалось загрузить результаты');
+          throw new Error('Failed to load results');
         }
         const data = await response.json();
         setResults(normalizeResult(data));
       } catch (err: any) {
-        setError(err.message || 'Ошибка загрузки результатов');
+        setError(err.message || 'Error loading results');
       } finally {
         setIsLoading(false);
       }
@@ -75,7 +75,7 @@ export function AssessmentResults({
           <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
             <Sparkles className="w-10 h-10 text-green-600" />
           </div>
-          <h2 className="text-xl text-gray-700">Загружаем результаты...</h2>
+          <h2 className="text-xl text-gray-700">Loading results...</h2>
         </div>
       </div>
     );
@@ -87,16 +87,16 @@ export function AssessmentResults({
         <div className="max-w-4xl mx-auto">
           <Button variant="ghost" onClick={onBack} className="mb-6">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Назад в дашборд
+            Back to Dashboard
           </Button>
           <Card className="p-8 text-center">
             <h2 className="text-2xl font-semibold text-gray-900 mb-2">
-              Результаты недоступны
+              Results Unavailable
             </h2>
             <p className="text-gray-600 mb-4">
-              {error || 'Похоже, тест ещё не завершён. Пройди профориентацию, чтобы увидеть рекомендации.'}
+              {error || 'It seems the test is not yet completed. Take the career assessment to see recommendations.'}
             </p>
-            <Button onClick={onBack}>Вернуться</Button>
+            <Button onClick={onBack}>Return</Button>
           </Card>
         </div>
       </div>
@@ -112,7 +112,7 @@ export function AssessmentResults({
           className="mb-6 border-gray-300 hover:bg-gray-50 hover:border-gray-400 text-gray-700 font-medium px-4 py-2 shadow-sm"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Назад в дашборд
+          Back to Dashboard
         </Button>
       </div>
       <CareerResultPage results={results} onComplete={onStartSimulation} />

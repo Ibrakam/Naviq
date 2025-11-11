@@ -84,7 +84,7 @@ export function AdminPanel({ accessToken, onBack }: AdminPanelProps) {
       );
 
       if (response.ok) {
-        alert('Симуляция успешно создана!');
+        alert('Simulation successfully created!');
         setShowCreateForm(false);
         setNewSimulation({
           title: '',
@@ -95,11 +95,11 @@ export function AdminPanel({ accessToken, onBack }: AdminPanelProps) {
           steps: [],
         });
       } else {
-        alert('Ошибка при создании симуляции');
+        alert('Error creating simulation');
       }
     } catch (error) {
       console.error('Failed to create simulation:', error);
-      alert('Ошибка при создании симуляции');
+      alert('Error creating simulation');
     }
   };
 
@@ -110,7 +110,7 @@ export function AdminPanel({ accessToken, onBack }: AdminPanelProps) {
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
             <BarChart3 className="w-8 h-8 text-green-600" />
           </div>
-          <p className="text-gray-600">Загрузка аналитики...</p>
+          <p className="text-gray-600">Loading analytics...</p>
         </div>
       </div>
     );
@@ -123,20 +123,20 @@ export function AdminPanel({ accessToken, onBack }: AdminPanelProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <Button variant="ghost" onClick={onBack} className="mb-4">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Назад к дашборду
+            Back to Dashboard
           </Button>
 
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl mb-2">Админ-панель</h1>
-              <p className="text-gray-600">Управление платформой Naviq</p>
+              <h1 className="text-3xl mb-2">Admin Panel</h1>
+              <p className="text-gray-600">Naviq Platform Management</p>
             </div>
             <Button
               onClick={() => setShowCreateForm(!showCreateForm)}
               className="bg-green-500 hover:bg-green-600"
             >
               <Plus className="w-4 h-4 mr-2" />
-              Создать симуляцию
+              Create Simulation
             </Button>
           </div>
         </div>
@@ -145,11 +145,11 @@ export function AdminPanel({ accessToken, onBack }: AdminPanelProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Analytics */}
         <div className="mb-8">
-          <h2 className="text-2xl mb-4">Аналитика</h2>
+          <h2 className="text-2xl mb-4">Analytics</h2>
           <div className="grid md:grid-cols-4 gap-6">
             <Card className="p-6">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-600">Всего пользователей</span>
+                <span className="text-gray-600">Total Users</span>
                 <Users className="w-5 h-5 text-green-600" />
               </div>
               <p className="text-3xl">{analytics?.totalUsers || 0}</p>
@@ -157,7 +157,7 @@ export function AdminPanel({ accessToken, onBack }: AdminPanelProps) {
 
             <Card className="p-6">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-600">Симуляций</span>
+                <span className="text-gray-600">Simulations</span>
                 <BookOpen className="w-5 h-5 text-green-600" />
               </div>
               <p className="text-3xl">{analytics?.totalSimulations || 0}</p>
@@ -165,7 +165,7 @@ export function AdminPanel({ accessToken, onBack }: AdminPanelProps) {
 
             <Card className="p-6">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-600">Пройденных тестов</span>
+                <span className="text-gray-600">Completed Assessments</span>
                 <TrendingUp className="w-5 h-5 text-green-600" />
               </div>
               <p className="text-3xl">{analytics?.completedAssessments || 0}</p>
@@ -173,7 +173,7 @@ export function AdminPanel({ accessToken, onBack }: AdminPanelProps) {
 
             <Card className="p-6">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-600">Завершений</span>
+                <span className="text-gray-600">Completions</span>
                 <BarChart3 className="w-5 h-5 text-green-600" />
               </div>
               <p className="text-3xl">{analytics?.totalCompletions || 0}</p>
@@ -184,30 +184,30 @@ export function AdminPanel({ accessToken, onBack }: AdminPanelProps) {
         {/* Create Simulation Form */}
         {showCreateForm && (
           <Card className="p-8 mb-8">
-            <h2 className="text-2xl mb-6">Создать новую симуляцию</h2>
+            <h2 className="text-2xl mb-6">Create New Simulation</h2>
             <form onSubmit={handleCreateSimulation} className="space-y-6">
               <div>
-                <Label htmlFor="title">Название симуляции</Label>
+                <Label htmlFor="title">Simulation Title</Label>
                 <Input
                   id="title"
                   value={newSimulation.title}
                   onChange={(e) =>
                     setNewSimulation({ ...newSimulation, title: e.target.value })
                   }
-                  placeholder="Например: Build a REST API"
+                  placeholder="e.g., Build a REST API"
                   required
                 />
               </div>
 
               <div>
-                <Label htmlFor="description">Описание</Label>
+                <Label htmlFor="description">Description</Label>
                 <Textarea
                   id="description"
                   value={newSimulation.description}
                   onChange={(e) =>
                     setNewSimulation({ ...newSimulation, description: e.target.value })
                   }
-                  placeholder="Краткое описание симуляции"
+                  placeholder="Brief description of the simulation"
                   rows={3}
                   required
                 />
@@ -215,7 +215,7 @@ export function AdminPanel({ accessToken, onBack }: AdminPanelProps) {
 
               <div className="grid md:grid-cols-3 gap-4">
                 <div>
-                  <Label htmlFor="track">Трек</Label>
+                  <Label htmlFor="track">Track</Label>
                   <select
                     id="track"
                     value={newSimulation.track}
@@ -234,7 +234,7 @@ export function AdminPanel({ accessToken, onBack }: AdminPanelProps) {
                 </div>
 
                 <div>
-                  <Label htmlFor="difficulty">Уровень</Label>
+                  <Label htmlFor="difficulty">Level</Label>
                   <select
                     id="difficulty"
                     value={newSimulation.difficulty}
@@ -250,7 +250,7 @@ export function AdminPanel({ accessToken, onBack }: AdminPanelProps) {
                 </div>
 
                 <div>
-                  <Label htmlFor="duration">Длительность</Label>
+                  <Label htmlFor="duration">Duration</Label>
                   <Input
                     id="duration"
                     value={newSimulation.duration}
@@ -269,10 +269,10 @@ export function AdminPanel({ accessToken, onBack }: AdminPanelProps) {
                   variant="outline"
                   onClick={() => setShowCreateForm(false)}
                 >
-                  Отмена
+                  Cancel
                 </Button>
                 <Button type="submit" className="bg-green-500 hover:bg-green-600">
-                  Создать симуляцию
+                  Create Simulation
                 </Button>
               </div>
             </form>
@@ -281,11 +281,11 @@ export function AdminPanel({ accessToken, onBack }: AdminPanelProps) {
 
         {/* Platform Stats */}
         <Card className="p-8">
-          <h2 className="text-2xl mb-6">Статистика платформы</h2>
+          <h2 className="text-2xl mb-6">Platform Statistics</h2>
           <div className="space-y-6">
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-700">Конверсия в прохождение теста</span>
+                <span className="text-gray-700">Assessment Completion Conversion</span>
                 <span className="">
                   {analytics?.totalUsers > 0
                     ? Math.round((analytics.completedAssessments / analytics.totalUsers) * 100)
@@ -309,7 +309,7 @@ export function AdminPanel({ accessToken, onBack }: AdminPanelProps) {
 
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-700">Среднее завершений на пользователя</span>
+                <span className="text-gray-700">Average Completions per User</span>
                 <span className="">
                   {analytics?.totalUsers > 0
                     ? (analytics.totalCompletions / analytics.totalUsers).toFixed(1)

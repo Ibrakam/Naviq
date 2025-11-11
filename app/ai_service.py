@@ -6,7 +6,11 @@ from typing import Dict, List, Optional, Sequence, Tuple
 from sqlalchemy.orm import Session
 
 from app.models import AssessmentQuestionModel, AssessmentSession
-from app.schemas import AssessmentQuestion as AssessmentQuestionSchema, AssessmentResult
+from app.schemas import (
+    AssessmentQuestion as AssessmentQuestionSchema,
+    AssessmentChatQuestion,
+    AssessmentResult,
+)
 from app.services.assessment_questions_data import ASSESSMENT_QUESTIONS
 from career_ml import N_QUESTIONS, TRACKS, predict_track, train_with_real_data
 
@@ -134,6 +138,71 @@ TRACK_DETAILS: Dict[str, Dict[str, Sequence[str]]] = {
     },
 }
 
+TEXT_KEYWORDS: Dict[str, Sequence[str]] = {
+    "design": (
+        "design",
+        "дизайн",
+        "ui",
+        "ux",
+        "интерф",
+        "визуал",
+        "figma",
+        "прототип",
+        "красив",
+        "анимац",
+    ),
+    "tech": (
+        "code",
+        "код",
+        "python",
+        "javascript",
+        "js",
+        "бот",
+        "backend",
+        "frontend",
+        "инжен",
+        "api",
+        "deploy",
+        "инфра",
+    ),
+    "business": (
+        "market",
+        "рынок",
+        "бизнес",
+        "unit",
+        "маркетинг",
+        "продаж",
+        "стратег",
+        "go-to",
+        "pitch",
+        "коммерц",
+    ),
+    "data": (
+        "data",
+        "данн",
+        "аналит",
+        "цифр",
+        "таблиц",
+        "excel",
+        "sql",
+        "metrics",
+        "dashboard",
+        "отчет",
+    ),
+    "social": (
+        "team",
+        "команд",
+        "люд",
+        "общен",
+        "лидер",
+        "организ",
+        "мотив",
+        "ментор",
+        "support",
+        "community",
+    ),
+}
+
 
 class AIAssessmentService:
     """Rule-based + ML hybrid assessment service backed by DB-stored questions."""
@@ -142,24 +211,40 @@ class AIAssessmentService:
 
     def generate_assessment_questions(self, db: Session) -> List[AssessmentQuestionSchema]:
         """Return questionnaire, seeding it first if DB is empty."""
-        self._ensure_questions_seeded(db)
-        questions = (
-            db.query(AssessmentQuestionModel)
-            .filter(AssessmentQuestionModel.is_active.is_(True))
-            .order_by(AssessmentQuestionModel.id)
-            .all()
-        )
+        questions = self._ordered_questions(db)
         return [
             AssessmentQuestionSchema(
                 id=q.id,
                 question=q.question,
-                type=q.type,
-                options=q.options,
+                type=q.type or "choice",
+                options=q.options or [],
                 category=q.category,
                 required=True,
             )
             for q in questions
         ]
+
+    def generate_chat_questions(self, db: Session) -> List[AssessmentChatQuestion]:
+        """Return chat-friendly question payload."""
+        questions = self._ordered_questions(db)
+        chat_payload: List[AssessmentChatQuestion] = []
+        for idx, question in enumerate(questions):
+            chat_payload.append(
+                AssessmentChatQuestion(
+                    id=question.id,
+                    role=question.role or "assistant",
+                    question_text=question.question,
+                    type=question.type or "choice",
+                    options=question.options or [],
+                    category=question.category,
+                    order=question.display_order or (idx + 1),
+                )
+            )
+        return chat_payload
+
+    def get_ordered_question_models(self, db: Session) -> List[AssessmentQuestionModel]:
+        """Expose ordered question models for router logic."""
+        return self._ordered_questions(db)
 
     def analyze_assessment_results(
         self,
@@ -186,6 +271,52 @@ class AIAssessmentService:
         combined_scores = self._combine_scores(track_scores, ml_result)
         result = self._build_result(combined_scores, track_scores, ml_result)
         return result, answer_row
+
+    def analyze_chat_session(
+        self,
+        messages: Sequence[Dict[str, object]],
+        questions: Sequence[AssessmentQuestionModel],
+    ) -> AssessmentResult:
+        question_map = {question.id: question for question in questions}
+        normalized_answers: Dict[int, str] = {}
+        track_scores = defaultdict(float)
+        for track in TRACKS:
+            track_scores[track] = 0.0
+
+        for message in messages:
+            if not isinstance(message, dict):
+                continue
+            if message.get("role") != "user":
+                continue
+            question_id = message.get("question_id")
+            if not question_id:
+                continue
+            question = question_map.get(int(question_id))
+            if not question:
+                continue
+
+            raw_answer = message.get("answer_value") or message.get("content")
+            if raw_answer is None:
+                continue
+            answer_text = str(raw_answer).strip()
+            if not answer_text:
+                continue
+
+            q_type = (question.type or "choice").lower()
+            if q_type == "text":
+                for track, value in self._score_text_answer(answer_text).items():
+                    track_scores[track] += value
+            else:
+                normalized = answer_text.upper()
+                normalized_answers[int(question.id)] = normalized
+                option_weights = (question.weights or {}).get(normalized, {})
+                for track, value in option_weights.items():
+                    track_scores[track] += value
+
+        answer_row = self._answers_to_row(normalized_answers)
+        ml_result = self._predict_with_model(answer_row)
+        combined_scores = self._combine_scores(track_scores, ml_result)
+        return self._build_result(combined_scores, track_scores, ml_result)
 
     def maybe_retrain_model(self, db: Session) -> bool:
         """Train ML модель, когда накапливается достаточно реальных сессий."""
@@ -221,6 +352,18 @@ class AIAssessmentService:
         return True
 
     # Helpers
+    def _ordered_questions(self, db: Session) -> List[AssessmentQuestionModel]:
+        self._ensure_questions_seeded(db)
+        questions = (
+            db.query(AssessmentQuestionModel)
+            .filter(AssessmentQuestionModel.is_active.is_(True))
+            .all()
+        )
+        return sorted(
+            questions,
+            key=lambda item: ((item.display_order or item.id), item.id),
+        )
+
     def _ensure_questions_seeded(self, db: Session) -> None:
         AssessmentQuestionModel.__table__.create(bind=db.get_bind(), checkfirst=True)
         for question in ASSESSMENT_QUESTIONS:
@@ -230,6 +373,9 @@ class AIAssessmentService:
             payload = {
                 "question": question["question"],
                 "type": question["type"],
+                "role": question["role"],
+                "category": question.get("category"),
+                "display_order": question.get("order"),
                 "options": question["options"],
                 "weights": question["weights"],
             }
@@ -257,6 +403,23 @@ class AIAssessmentService:
             for track, value in option_weights.items():
                 if track in scores:
                     scores[track] += value
+        return scores
+
+    def _score_text_answer(self, answer: str) -> Dict[str, float]:
+        normalized = answer.lower()
+        scores = defaultdict(float)
+        for track in TRACKS:
+            scores[track] = 0.0
+
+        for track, keywords in TEXT_KEYWORDS.items():
+            for keyword in keywords:
+                if keyword in normalized:
+                    scores[track] += 1.0
+
+        if not any(value > 0 for value in scores.values()):
+            # Лёгкий сдвиг в гуманитарные направления, если ключевых слов нет
+            scores["social"] += 0.5
+            scores["business"] += 0.5
         return scores
 
     def _answers_to_row(self, answers: Dict[int, str]) -> List[str]:

@@ -33,8 +33,8 @@ import { apiRoutes, buildApiUrl } from '../utils/api';
 // Format date helper
 const formatDate = (date: Date, formatType: 'full' | 'month' = 'full'): string => {
   const months = [
-    'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-    'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
   ];
   
   if (formatType === 'month') {
@@ -61,8 +61,8 @@ export function CompleteProfile({
 }: CompleteProfileProps) {
   const currentYear = new Date().getFullYear();
   const monthLabels = [
-    'Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
-    'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
   ];
   const [name, setName] = useState(user?.name || '');
   const [dateOfBirth, setDateOfBirth] = useState<Date | undefined>(
@@ -191,7 +191,7 @@ export function CompleteProfile({
       }
 
       // Show success message
-      alert('Профиль успешно сохранен!');
+      alert('Profile successfully saved!');
       
       // If in edit mode, navigate back to profile page
       if (isEditMode && onNavigate) {
@@ -232,8 +232,8 @@ export function CompleteProfile({
       }
     } catch (error: any) {
       console.error('Save error:', error);
-      setError(error.message || 'Ошибка при сохранении профиля');
-      alert('Ошибка при сохранении: ' + (error.message || 'Неизвестная ошибка'));
+      setError(error.message || 'Error saving profile');
+      alert('Error saving: ' + (error.message || 'Unknown error'));
     } finally {
       setLoading(false);
     }
@@ -249,10 +249,10 @@ export function CompleteProfile({
               <Rocket className="w-8 h-8" />
             </div>
             <h2 className="text-4xl font-bold mb-4">
-              Начни свой карьерный путь
+              Start Your Career Path
             </h2>
             <p className="text-xl opacity-90 mb-8">
-              Заполни профиль и получи персональные рекомендации от AI
+              Complete your profile and get personalized recommendations from AI
             </p>
           </div>
 
@@ -262,9 +262,9 @@ export function CompleteProfile({
                 <Target className="w-5 h-5" />
               </div>
               <div>
-                <div className="font-semibold">AI-профориентация</div>
+                <div className="font-semibold">AI Career Assessment</div>
                 <div className="text-sm opacity-90">
-                  Персонализированный тест с рекомендациями
+                  Personalized test with recommendations
                 </div>
               </div>
             </div>
@@ -274,9 +274,9 @@ export function CompleteProfile({
                 <School className="w-5 h-5" />
               </div>
               <div>
-                <div className="font-semibold">Карьерные симуляции</div>
+                <div className="font-semibold">Career Simulations</div>
                 <div className="text-sm opacity-90">
-                  Реальный опыт от ведущих компаний
+                  Real experience from leading companies
                 </div>
               </div>
             </div>
@@ -286,9 +286,9 @@ export function CompleteProfile({
                 <Award className="w-5 h-5" />
               </div>
               <div>
-                <div className="font-semibold">Сертификаты</div>
+                <div className="font-semibold">Certificates</div>
                 <div className="text-sm opacity-90">
-                  Подтверждение навыков для резюме
+                  Skills verification for resume
                 </div>
               </div>
             </div>
@@ -309,19 +309,19 @@ export function CompleteProfile({
             </div>
 
             <h1 className="text-4xl font-bold mb-2">
-              {isEditMode ? 'Редактировать профиль' : 'Профиль'}
+              {isEditMode ? 'Edit Profile' : 'Profile'}
             </h1>
             <p className="text-gray-600 mb-6">
               {isEditMode 
-                ? 'Обнови информацию о себе для лучшего опыта'
-                : `Профиль для ${user?.email || 'вашего аккаунта'}`}
+                ? 'Update your information for a better experience'
+                : `Profile for ${user?.email || 'your account'}`}
             </p>
 
             {/* Progress Bar */}
             <div className="mb-6">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-gray-700">
-                  Прогресс заполнения
+                  Completion Progress
                 </span>
                 <span className="text-sm font-semibold text-green-600">
                   {progress}%
@@ -344,31 +344,31 @@ export function CompleteProfile({
 
           <Card className="relative isolate p-6 sm:p-8 shadow-xl border border-gray-100 overflow-visible">
             <form onSubmit={handleSubmit} className="space-y-8 overflow-visible relative isolate">
-              {/* Имя */}
+              {/* Name */}
               <div className="space-y-2">
                 <Label htmlFor="name" className="text-base font-semibold flex items-center gap-2">
                   <User className="w-4 h-4 text-green-600" />
-                  Имя *
+                  Name *
                 </Label>
                 <Input
                   id="name"
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Иван Иванов"
+                  placeholder="John Doe"
                   required
                   className="h-12 text-base border-2 focus:border-green-500 focus:ring-green-500"
                 />
               </div>
 
-              {/* Дата рождения */}
+              {/* Date of Birth */}
               <div className="space-y-2 relative z-20 isolate">
                 <Label htmlFor="date_of_birth" className="text-base font-semibold flex items-center gap-2">
                   <CalendarIcon className="w-4 h-4 text-green-600" />
-                  Дата рождения
+                  Date of Birth
                 </Label>
                 <p className="text-xs text-gray-500 -mt-1">
-                  Только для проверки возраста. Мы не передаем эту информацию третьим лицам.
+                  Only for age verification. We do not share this information with third parties.
                 </p>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -381,7 +381,7 @@ export function CompleteProfile({
                       {dateOfBirth ? (
                         <span className="text-gray-900">{formatDate(dateOfBirth)}</span>
                       ) : (
-                        <span className="text-gray-500">Выберите дату</span>
+                        <span className="text-gray-500">Select date</span>
                       )}
                     </Button>
                   </PopoverTrigger>
@@ -419,18 +419,18 @@ export function CompleteProfile({
                 </Popover>
               </div>
 
-              {/* Статус обучения */}
+              {/* Education Status */}
               <div className="space-y-2 relative z-20 isolate">
                 <Label htmlFor="education_status" className="text-base font-semibold flex items-center gap-2">
                   <GraduationCap className="w-4 h-4 text-green-600" />
-                  Текущий / прошлый статус обучения или карьеры
+                  Current / Previous Education or Career Status
                 </Label>
                 <Select
                   value={educationStatus}
                   onValueChange={setEducationStatus}
                 >
                   <SelectTrigger className="h-12 text-base border-2 focus:border-green-500 focus:ring-green-500 relative z-10">
-                    <SelectValue placeholder="Выберите статус" />
+                    <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent 
                     position="popper"
@@ -441,42 +441,42 @@ export function CompleteProfile({
                     <SelectItem value="university">
                       <div className="flex items-center gap-2">
                         <GraduationCap className="h-4 w-4" />
-                        Университет
+                        University
                       </div>
                     </SelectItem>
-                    <SelectItem value="college">Колледж</SelectItem>
-                    <SelectItem value="high_school">Средняя школа</SelectItem>
-                    <SelectItem value="graduate">Выпускник</SelectItem>
-                    <SelectItem value="working">Работаю</SelectItem>
-                    <SelectItem value="other">Другое</SelectItem>
+                    <SelectItem value="college">College</SelectItem>
+                    <SelectItem value="high_school">High School</SelectItem>
+                    <SelectItem value="graduate">Graduate</SelectItem>
+                    <SelectItem value="working">Working</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
-              {/* Название учебного заведения */}
-              {educationStatus && educationStatus !== 'Не учусь' && (
+              {/* School Name */}
+              {educationStatus && educationStatus !== 'Not studying' && (
                 <div className="space-y-2 relative z-10 animate-in slide-in-from-top-2 duration-300">
                   <Label htmlFor="school_name" className="text-base font-semibold flex items-center gap-2">
                     <School className="w-4 h-4 text-green-600" />
-                    Название учебного заведения
+                    School Name
                   </Label>
                   <Input
                     id="school_name"
                     type="text"
                     value={schoolName}
                     onChange={(e) => setSchoolName(e.target.value)}
-                    placeholder="Например: МГУ, MIT, Stanford University"
+                    placeholder="e.g., MIT, Stanford University"
                     className="h-12 text-base border-2 focus:border-green-500 focus:ring-green-500"
                   />
                 </div>
               )}
 
-              {/* Дата окончания */}
-              {educationStatus && educationStatus !== 'Не учусь' && (
+              {/* Graduation Date */}
+              {educationStatus && educationStatus !== 'Not studying' && (
                 <div className="space-y-2 relative z-20 animate-in slide-in-from-top-2 duration-300 isolate">
                   <Label htmlFor="graduation_date" className="text-base font-semibold flex items-center gap-2">
                     <CalendarIcon className="w-4 h-4 text-green-600" />
-                    Ожидаемая дата окончания обучения
+                    Expected Graduation Date
                   </Label>
                   <Popover>
                     <PopoverTrigger asChild>
@@ -489,7 +489,7 @@ export function CompleteProfile({
                         {graduationDate ? (
                           <span className="text-gray-900">{formatDate(graduationDate, 'month')}</span>
                         ) : (
-                          <span className="text-gray-500">Выберите дату</span>
+                          <span className="text-gray-500">Select date</span>
                         )}
                       </Button>
                     </PopoverTrigger>
@@ -534,11 +534,11 @@ export function CompleteProfile({
                     <CheckCircle2 className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
                     <div>
                       <div className="font-semibold text-gray-900 mb-1">
-                        Отлично! Ты на правильном пути
+                        Great! You're on the right track
                       </div>
                       <div className="text-sm text-gray-600">
-                        После заполнения профиля ты получишь доступ к персональным рекомендациям,
-                        карьерным симуляциям и сертификатам
+                        After completing your profile, you'll get access to personalized recommendations,
+                        career simulations, and certificates
                       </div>
                     </div>
                   </div>
@@ -549,13 +549,13 @@ export function CompleteProfile({
               <div className="pt-6 border-t border-gray-200">
                 {!isEditMode && (
                   <p className="text-xs text-gray-600 mb-6 text-center">
-                    Нажимая "Согласен и присоединиться", вы соглашаетесь с нашими{' '}
+                    By clicking "Agree and Join", you agree to our{' '}
                     <a href="#" className="text-green-600 hover:text-green-700 font-medium underline">
-                      Условиями использования
+                      Terms of Service
                     </a>{' '}
-                    и{' '}
+                    and{' '}
                     <a href="#" className="text-green-600 hover:text-green-700 font-medium underline">
-                      Политикой конфиденциальности
+                      Privacy Policy
                     </a>
                   </p>
                 )}
@@ -567,11 +567,11 @@ export function CompleteProfile({
                   {loading ? (
                     <>
                       <Sparkles className="mr-2 h-5 w-5 animate-spin" />
-                      Сохранение...
+                      Saving...
                     </>
                   ) : (
                     <>
-                      {isEditMode ? 'Сохранить изменения' : 'Согласен и присоединиться'}
+                      {isEditMode ? 'Save Changes' : 'Agree and Join'}
                       <ArrowRight className="ml-2 h-5 w-5" />
                     </>
                   )}

@@ -7,7 +7,7 @@ be editable via admin tooling, but for now we keep them versioned in code.
 
 from __future__ import annotations
 
-from typing import Dict, List, TypedDict
+from typing import Dict, List, Optional, TypedDict
 
 
 class OptionDict(TypedDict):
@@ -15,10 +15,13 @@ class OptionDict(TypedDict):
     text: str
 
 
-class AssessmentQuestionDict(TypedDict):
+class AssessmentQuestionDict(TypedDict, total=False):
     id: int
     question: str
     type: str
+    role: str
+    order: int
+    category: str
     options: List[OptionDict]
     weights: Dict[str, Dict[str, int]]
 
@@ -234,7 +237,7 @@ RAW_QUESTION_DATA: List[AssessmentQuestionDict] = [
     },
     {
         "id": 13,
-        "question": "Нужно сделать продукт для школы Узбекистана.",
+        "question": "Нужно сделать продукт для школы.",
         "type": "multiple_choice",
         "options": _make_options({
             "A": "Сделаю визуал для школьников.",
@@ -370,5 +373,63 @@ RAW_QUESTION_DATA: List[AssessmentQuestionDict] = [
     },
 ]
 
+ADDITIONAL_TEXT_QUESTIONS: List[AssessmentQuestionDict] = [
+    {
+        "id": 101,
+        "question": "Tell me what kind of tasks fire you up in a team: generating ideas, coding, digging into data, or working with people? Why?",
+        "type": "text",
+        "category": "interests",
+        "options": [],
+        "weights": {},
+    },
+    {
+        "id": 102,
+        "question": "Think of a recent project or assignment you are proud of. What did you do there and why did it energize you?",
+        "type": "text",
+        "category": "experience",
+        "options": [],
+        "weights": {},
+    },
+]
+
+RAW_QUESTION_DATA.extend(ADDITIONAL_TEXT_QUESTIONS)
+
+CHAT_PROMPTS = {
+    1: "You and your friends have two days left to finish a mini-startup. What part do you grab first and why?",
+    2: "A teacher asked you to explain a tough topic so classmates truly get it. How would you approach that?",
+    3: "The student club website just went down. Walk me through the first things you would do to bring it back.",
+    4: "Your team argues about what matters most—polish, speed, or sales. How do you respond and what is your reasoning?",
+    5: "The hackathon topic is “improve education.” Which part of the solution would you own and how would you execute it?",
+    6: "Someone says “just make it better.” How do you understand what “better” means here and what steps do you take?",
+    7: "You are preparing a demo for investors. What would you show and how would you hook them?",
+    8: "You are collaborating with an international team. How do you keep everyone aligned and understanding each other?",
+    9: "A user complains that the product feels inconvenient. How do you investigate and what do you do next?",
+    10: "You’re choosing your role in a brand-new team. Describe the work you’d like to do and why it suits you.",
+    11: "The task changed at the very last moment. How do you react and reorganize your plan?",
+    12: "You receive a project without any brief or specification. How do you bring clarity and get started?",
+    13: "You need to design a product for a school. What's your first move and why?",
+    14: "You spot a poorly designed website. What bothers you most and how would you fix it?",
+    15: "There’s a conflict brewing inside the team. What is your usual approach to bring the vibe back on track?",
+    16: "You’re choosing a dream internship. Where would you go and what kind of tasks excite you?",
+    17: "You have to work with people far from tech. How do you explain ideas and keep them engaged?",
+    18: "What inspires you more—creating something new or keeping everything structured? Give a story or example.",
+    19: "You want to take a project global. What are the very first steps you would take?",
+    20: "What motivates you the most when you work on a project, and why exactly that?",
+}
+
+for question in RAW_QUESTION_DATA:
+    question["question"] = CHAT_PROMPTS.get(question["id"], question["question"])
+    question["type"] = "text"
+    question["options"] = []
+    question["weights"] = {}
+
+for idx, question in enumerate(RAW_QUESTION_DATA, start=1):
+    question.setdefault("role", "assistant")
+    question.setdefault("order", idx)
+    question.setdefault("category", "general")
+    question.setdefault("options", [])
+    question.setdefault("weights", {})
+    if question.get("type") != "text":
+        question["type"] = "choice"
 
 ASSESSMENT_QUESTIONS: List[AssessmentQuestionDict] = RAW_QUESTION_DATA

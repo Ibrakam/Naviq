@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, Literal
 from datetime import datetime, date
 
 
@@ -93,6 +93,56 @@ class AssessmentResult(BaseModel):
     overall_score: float
     recommendations: List[str]
     primary_track: Optional[str] = None
+
+
+class AssessmentChatQuestion(BaseModel):
+    id: int
+    role: Literal["system", "assistant"]
+    question_text: str
+    type: Literal["text", "choice"]
+    options: Optional[List[AssessmentOption]] = None
+    category: Optional[str] = None
+    order: Optional[int] = None
+
+
+class AssessmentChatMessage(BaseModel):
+    role: Literal["system", "assistant", "user"]
+    content: str
+    question_id: Optional[int] = None
+    answer_value: Optional[str] = None
+    meta: Optional[Dict[str, Any]] = None
+    type: Optional[str] = None
+    options: Optional[List[AssessmentOption]] = None
+    category: Optional[str] = None
+
+
+class AssessmentChatProgress(BaseModel):
+    current: int
+    total: int
+
+
+class AssessmentChatAnswer(BaseModel):
+    session_id: Optional[int] = None
+    question_id: int
+    user_answer: Any
+
+
+class AssessmentChatAnswerResponse(BaseModel):
+    session_id: int
+    status: Literal["draft", "completed"]
+    next_question: Optional[AssessmentChatQuestion] = None
+    progress: AssessmentChatProgress
+    messages: List[AssessmentChatMessage]
+    result: Optional[AssessmentResult] = None
+
+
+class AssessmentChatSession(BaseModel):
+    session_id: int
+    status: Literal["draft", "completed"]
+    progress: AssessmentChatProgress
+    messages: List[AssessmentChatMessage]
+    result: Optional[AssessmentResult] = None
+    next_question: Optional[AssessmentChatQuestion] = None
 
 
 # Career Track schemas

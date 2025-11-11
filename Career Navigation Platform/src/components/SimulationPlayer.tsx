@@ -210,7 +210,7 @@ export function SimulationPlayer({ accessToken, simulationId, onComplete, onBack
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
             <Clock className="w-8 h-8 text-green-600" />
           </div>
-          <p className="text-gray-600">Загрузка стажировки...</p>
+          <p className="text-gray-600">Loading internship...</p>
         </div>
       </div>
     );
@@ -220,8 +220,8 @@ export function SimulationPlayer({ accessToken, simulationId, onComplete, onBack
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <h2 className="text-2xl mb-4">Стажировка не найдена</h2>
-          <Button onClick={onBack}>Вернуться</Button>
+          <h2 className="text-2xl mb-4">Internship not found</h2>
+          <Button onClick={onBack}>Return</Button>
         </div>
       </div>
     );
@@ -242,7 +242,7 @@ export function SimulationPlayer({ accessToken, simulationId, onComplete, onBack
               )}
             </div>
             <h1 className="text-4xl mb-4">
-              {passed ? 'Поздравляем! Стажировка пройдена!' : 'Стажировка не пройдена'}
+              {passed ? 'Congratulations! Internship Completed!' : 'Internship Not Completed'}
             </h1>
             <p className="text-xl text-gray-600 mb-8">
               {simulation.company && (
@@ -256,29 +256,29 @@ export function SimulationPlayer({ accessToken, simulationId, onComplete, onBack
           </div>
 
           <Card className="p-8 mb-8">
-            <h2 className="text-2xl mb-6">Результаты</h2>
+            <h2 className="text-2xl mb-6">Results</h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                <span>Набранные баллы</span>
+                <span>Points Scored</span>
                 <span className="text-2xl">{result.score} / {result.maxScore}</span>
               </div>
               <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                <span>Процент правильных ответов</span>
+                <span>Correct Answers Percentage</span>
                 <span className={`text-2xl ${passed ? 'text-green-600' : 'text-red-600'}`}>
                   {result.percentage}%
                 </span>
               </div>
               <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                <span>Статус</span>
+                <span>Status</span>
                 <span className={`px-4 py-2 rounded-full ${passed ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
-                  {passed ? 'Прошел' : 'Не прошел'}
+                  {passed ? 'Passed' : 'Failed'}
                 </span>
               </div>
             </div>
           </Card>
 
           <Card className="p-8 mb-8">
-            <h2 className="text-2xl mb-6">Что дальше?</h2>
+            <h2 className="text-2xl mb-6">What's Next?</h2>
             <div className="space-y-4">
               {passed ? (
                 <>
@@ -287,9 +287,9 @@ export function SimulationPlayer({ accessToken, simulationId, onComplete, onBack
                       <Check className="w-5 h-5 text-green-600" />
                     </div>
                     <div>
-                      <h3 className="mb-1">Сертификат добавлен</h3>
+                      <h3 className="mb-1">Certificate Added</h3>
                       <p className="text-gray-600 text-sm">
-                        Сертификат о прохождении стажировки добавлен в твой профиль
+                        The internship completion certificate has been added to your profile
                       </p>
                     </div>
                   </div>
@@ -298,9 +298,9 @@ export function SimulationPlayer({ accessToken, simulationId, onComplete, onBack
                       <Check className="w-5 h-5 text-green-600" />
                     </div>
                     <div>
-                      <h3 className="mb-1">Добавь в резюме</h3>
+                      <h3 className="mb-1">Add to Resume</h3>
                       <p className="text-gray-600 text-sm">
-                        Упомяни эту стажировку в своём резюме и LinkedIn
+                        Mention this internship in your resume and LinkedIn
                       </p>
                     </div>
                   </div>
@@ -309,9 +309,9 @@ export function SimulationPlayer({ accessToken, simulationId, onComplete, onBack
                       <Check className="w-5 h-5 text-green-600" />
                     </div>
                     <div>
-                      <h3 className="mb-1">Попробуй другие стажировки</h3>
+                      <h3 className="mb-1">Try Other Internships</h3>
                       <p className="text-gray-600 text-sm">
-                        Получи опыт в других компаниях и направлениях
+                        Gain experience in other companies and directions
                       </p>
                     </div>
                   </div>
@@ -323,9 +323,9 @@ export function SimulationPlayer({ accessToken, simulationId, onComplete, onBack
                       <RotateCcw className="w-5 h-5 text-yellow-600" />
                     </div>
                     <div>
-                      <h3 className="mb-1">Попробуй ещё раз</h3>
+                      <h3 className="mb-1">Try Again</h3>
                       <p className="text-gray-600 text-sm">
-                        Для прохождения нужно набрать минимум 70%. Изучи материалы и попробуй снова!
+                        You need to score at least 70% to pass. Study the materials and try again!
                       </p>
                     </div>
                   </div>
@@ -334,9 +334,9 @@ export function SimulationPlayer({ accessToken, simulationId, onComplete, onBack
                       <Check className="w-5 h-5 text-blue-600" />
                     </div>
                     <div>
-                      <h3 className="mb-1">Попытка сохранена</h3>
+                      <h3 className="mb-1">Attempt Saved</h3>
                       <p className="text-gray-600 text-sm">
-                        Эта попытка сохранена в твоём профиле. Ты можешь пересдать неограниченное количество раз
+                        This attempt has been saved in your profile. You can retake it unlimited times
                       </p>
                     </div>
                   </div>
@@ -349,11 +349,11 @@ export function SimulationPlayer({ accessToken, simulationId, onComplete, onBack
             {!passed && (
               <Button onClick={handleRetake} variant="outline">
                 <RotateCcw className="w-4 h-4 mr-2" />
-                Пересдать
+                Retake
               </Button>
             )}
             <Button onClick={onComplete} className="bg-green-500 hover:bg-green-600">
-              {passed ? 'К дашборду' : 'К каталогу'}
+              {passed ? 'To Dashboard' : 'To Catalog'}
             </Button>
           </div>
         </div>
@@ -394,7 +394,7 @@ export function SimulationPlayer({ accessToken, simulationId, onComplete, onBack
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <Button variant="ghost" onClick={onBack} className="mb-4">
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Выйти из стажировки
+            Exit Internship
           </Button>
 
           <div className="flex items-center justify-between mb-4">
@@ -407,7 +407,7 @@ export function SimulationPlayer({ accessToken, simulationId, onComplete, onBack
               )}
               <h1 className="text-2xl mb-1">{simulation.title}</h1>
               <p className="text-gray-600">
-                Шаг {currentStep + 1} из {simulation.steps.length}
+                Step {currentStep + 1} of {simulation.steps.length}
               </p>
             </div>
             <div className="text-right">
@@ -434,14 +434,14 @@ export function SimulationPlayer({ accessToken, simulationId, onComplete, onBack
             )}
             {step.expected_output && (
               <p className="text-sm text-gray-500">
-                Ожидаемый результат: {step.expected_output}
+                Expected result: {step.expected_output}
               </p>
             )}
           </div>
 
           {!isTheoryStep ? (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
-              <h3 className="mb-4">{step.question || 'Выполни задание'}</h3>
+              <h3 className="mb-4">{step.question || 'Complete the task'}</h3>
 
               {/* Quiz - Single Choice */}
               {isQuizStep && step.options && (
@@ -509,12 +509,12 @@ export function SimulationPlayer({ accessToken, simulationId, onComplete, onBack
                   <Textarea
                     value={currentAnswer}
                     onChange={(e) => setCurrentAnswer(e.target.value)}
-                    placeholder={step.input_placeholder || step.placeholder || 'Напиши свой код здесь...'}
+                    placeholder={step.input_placeholder || step.placeholder || 'Write your code here...'}
                     rows={12}
                     className="font-mono text-sm"
                   />
                   <p className="text-sm text-gray-600 mt-2">
-                    💡 Подсказка: Используй правильный синтаксис и ключевые слова
+                    💡 Tip: Use correct syntax and keywords
                   </p>
                 </div>
               )}
@@ -525,20 +525,20 @@ export function SimulationPlayer({ accessToken, simulationId, onComplete, onBack
                   <Textarea
                     value={currentAnswer}
                     onChange={(e) => setCurrentAnswer(e.target.value)}
-                    placeholder={step.input_placeholder || step.placeholder || 'Напиши подробный ответ...'}
+                    placeholder={step.input_placeholder || step.placeholder || 'Write a detailed answer...'}
                     rows={6}
                   />
                   <p className="text-sm text-gray-600 mt-2">
-                    Постарайся привести конкретные цифры или шаги — это повышает ценность ответа.
+                    Try to include specific numbers or steps — this increases the value of your answer.
                   </p>
                 </div>
               )}
             </div>
           ) : (
             <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-              <h3 className="mb-3">📚 Теоретический материал</h3>
+              <h3 className="mb-3">📚 Theoretical Material</h3>
               <p className="text-gray-700">
-                {step.summary || 'Внимательно изучи информацию на этом шаге. Она пригодится для выполнения практических заданий.'}
+                {step.summary || 'Carefully study the information on this step. It will be useful for completing practical tasks.'}
               </p>
             </div>
           )}
@@ -552,11 +552,11 @@ export function SimulationPlayer({ accessToken, simulationId, onComplete, onBack
             disabled={currentStep === 0}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Назад
+            Back
           </Button>
 
           <span className="text-sm text-gray-600">
-            {saving ? 'Сохранение...' : 'Автосохранение'}
+            {saving ? 'Saving...' : 'Auto-saving'}
           </span>
 
           <Button
@@ -564,7 +564,7 @@ export function SimulationPlayer({ accessToken, simulationId, onComplete, onBack
             className="bg-green-500 hover:bg-green-600"
             disabled={!canProceed()}
           >
-            {currentStep === simulation.steps.length - 1 ? 'Завершить' : 'Далее'}
+            {currentStep === simulation.steps.length - 1 ? 'Complete' : 'Next'}
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         </div>
