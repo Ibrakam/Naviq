@@ -90,10 +90,10 @@ export function Profile({ accessToken, user, onBack, onNavigate }: ProfileProps)
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
-            <Trophy className="w-8 h-8 text-green-600" />
+          <div className="w-16 h-16 bg-[#edeaff] rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+            <Trophy className="w-8 h-8 text-[#5b4dff]" />
           </div>
           <p className="text-gray-600">Loading profile...</p>
         </div>
@@ -150,7 +150,7 @@ export function Profile({ accessToken, user, onBack, onNavigate }: ProfileProps)
   const profileComplete = isProfileComplete();
 
   return (
-    <div className="min-h-screen bg-gray-50 overflow-visible">
+    <div className="min-h-screen text-[#0f1b40] overflow-visible">
       {/* Header */}
       <div className="bg-white border-b border-gray-200 overflow-visible">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6 overflow-visible">
@@ -160,7 +160,7 @@ export function Profile({ accessToken, user, onBack, onNavigate }: ProfileProps)
           </Button>
 
           <div className="flex items-start gap-6">
-            <div className="w-24 h-24 bg-gradient-to-br from-green-400 to-green-600 rounded-full flex items-center justify-center text-white text-3xl">
+            <div className="w-24 h-24 bg-gradient-to-br from-[#7b61ff] to-[#4fb5ff] rounded-full flex items-center justify-center text-white text-3xl">
               {profile?.name?.charAt(0).toUpperCase() || 'U'}
             </div>
             <div className="flex-1">
@@ -185,8 +185,8 @@ export function Profile({ accessToken, user, onBack, onNavigate }: ProfileProps)
             <div className="p-6 overflow-visible">
               <div className="flex items-start gap-4 mb-6">
                 <div className="flex-shrink-0">
-                  <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                    <Info className="h-5 w-5 text-green-600" />
+                  <div className="w-10 h-10 bg-[#edeaff] rounded-lg flex items-center justify-center">
+                    <Info className="h-5 w-5 text-[#5b4dff]" />
                   </div>
                 </div>
                 <div className="flex-1">
@@ -207,7 +207,7 @@ export function Profile({ accessToken, user, onBack, onNavigate }: ProfileProps)
                   {missingFields.map((field) => (
                     <div
                       key={field}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-700"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#f6f8ff] border border-[#e0e4f5] rounded-lg text-sm text-gray-700"
                     >
                       <div className="w-1.5 h-1.5 bg-gray-400 rounded-full"></div>
                       <span>{field}</span>
@@ -218,7 +218,7 @@ export function Profile({ accessToken, user, onBack, onNavigate }: ProfileProps)
 
               <Button
                 onClick={handleEditProfile}
-                className="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white font-medium shadow-sm hover:shadow transition-all"
+                className="w-full sm:w-auto"
               >
                 <Edit className="w-4 h-4 mr-2" />
                 Complete Profile
@@ -233,14 +233,14 @@ export function Profile({ accessToken, user, onBack, onNavigate }: ProfileProps)
           <div className="p-6 overflow-visible">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                <User className="w-5 h-5 text-green-600" />
+                <User className="w-5 h-5 text-[#5b4dff]" />
                 Personal Information
               </h2>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleEditProfile}
-                className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                className="text-[#5b4dff] hover:text-[#4536d4] hover:bg-[#f3f5ff]"
               >
                 <Edit className="w-4 h-4 mr-2" />
                 Edit
@@ -336,7 +336,7 @@ export function Profile({ accessToken, user, onBack, onNavigate }: ProfileProps)
               {profile.assessmentResults.tracks.map((track: any, index: number) => (
                 <Card key={track.id} className="p-6">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                    <div className="w-12 h-12 bg-[#edeaff] rounded-lg flex items-center justify-center">
                       <span className="text-2xl">{index === 0 ? '🎯' : '⭐'}</span>
                     </div>
                     <div>
@@ -374,15 +374,15 @@ export function Profile({ accessToken, user, onBack, onNavigate }: ProfileProps)
                 const passed = result.passed;
 
                 return (
-                  <Card key={simId} className={`p-6 ${passed ? 'border-l-4 border-green-500' : 'border-l-4 border-red-500'}`}>
+                  <Card key={simId} className={`p-6 ${passed ? 'border-l-4 border-[#6555ff]' : 'border-l-4 border-red-500'}`}>
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
                           <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                            passed ? 'bg-green-100' : 'bg-red-100'
+                            passed ? 'bg-[#edeaff]' : 'bg-red-100'
                           }`}>
                             {passed ? (
-                              <CheckCircle className="w-6 h-6 text-green-600" />
+                              <CheckCircle className="w-6 h-6 text-[#5b4dff]" />
                             ) : (
                               <XCircle className="w-6 h-6 text-red-600" />
                             )}
@@ -400,7 +400,7 @@ export function Profile({ accessToken, user, onBack, onNavigate }: ProfileProps)
                             <span className="text-sm text-gray-600">Status:</span>
                             <span className={`px-3 py-1 rounded-full text-sm ${
                               passed 
-                                ? 'bg-green-100 text-green-700' 
+                                ? 'bg-[#edeaff] text-[#4536d4]' 
                                 : 'bg-red-100 text-red-700'
                             }`}>
                               {passed ? 'Passed' : 'Failed'}

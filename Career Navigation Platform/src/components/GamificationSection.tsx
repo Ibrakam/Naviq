@@ -290,7 +290,7 @@ export function GamificationSection({ accessToken }: GamificationSectionProps) {
                 {uniqueRecentAchievements.slice(0, 5).map((userAch: UserAchievement) => (
                   <div
                     key={userAch.id}
-                    className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center hover:shadow-md hover:border-green-300 transition-all"
+                    className="bg-[#f6f8ff] border border-[#e0e4f5] rounded-xl p-4 text-center hover:shadow-md hover:border-[#7B61FF]/50 transition-all"
                   >
                     <div className="text-4xl mb-2">
                       {userAch.achievement.icon}
@@ -324,7 +324,7 @@ export function GamificationSection({ accessToken }: GamificationSectionProps) {
                 {uniqueAllAchievements.map((userAch: UserAchievement) => (
                   <div
                     key={userAch.id}
-                    className="bg-gray-50 border border-gray-200 rounded-lg p-5 text-center hover:shadow-md hover:border-green-300 transition-all"
+                    className="bg-[#f6f8ff] border border-[#e0e4f5] rounded-xl p-5 text-center hover:shadow-md hover:border-[#7B61FF]/50 transition-all"
                   >
                     <div className="text-5xl mb-3">
                       {userAch.achievement.icon}
@@ -385,4 +385,3 @@ export function GamificationSection({ accessToken }: GamificationSectionProps) {
     </>
   );
 }
-

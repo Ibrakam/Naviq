@@ -205,7 +205,7 @@ export function SimulationPlayer({ accessToken, simulationId, onComplete, onBack
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
             <Clock className="w-8 h-8 text-green-600" />
@@ -218,7 +218,7 @@ export function SimulationPlayer({ accessToken, simulationId, onComplete, onBack
 
   if (!simulation) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h2 className="text-2xl mb-4">Internship not found</h2>
           <Button onClick={onBack}>Return</Button>
@@ -231,7 +231,7 @@ export function SimulationPlayer({ accessToken, simulationId, onComplete, onBack
     const passed = result.passed;
     
     return (
-      <div className="min-h-screen bg-gray-50 py-12">
+      <div className="min-h-screen text-[#0f1b40] py-12">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <div className={`w-24 h-24 ${passed ? 'bg-green-100' : 'bg-red-100'} rounded-full flex items-center justify-center mx-auto mb-6`}>
@@ -258,17 +258,17 @@ export function SimulationPlayer({ accessToken, simulationId, onComplete, onBack
           <Card className="p-8 mb-8">
             <h2 className="text-2xl mb-6">Results</h2>
             <div className="space-y-4">
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-[#f6f8ff] rounded-xl border border-[#e0e4f5]">
                 <span>Points Scored</span>
                 <span className="text-2xl">{result.score} / {result.maxScore}</span>
               </div>
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-[#f6f8ff] rounded-xl border border-[#e0e4f5]">
                 <span>Correct Answers Percentage</span>
                 <span className={`text-2xl ${passed ? 'text-green-600' : 'text-red-600'}`}>
                   {result.percentage}%
                 </span>
               </div>
-              <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center justify-between p-4 bg-[#f6f8ff] rounded-xl border border-[#e0e4f5]">
                 <span>Status</span>
                 <span className={`px-4 py-2 rounded-full ${passed ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
                   {passed ? 'Passed' : 'Failed'}
@@ -388,7 +388,7 @@ export function SimulationPlayer({ accessToken, simulationId, onComplete, onBack
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen text-[#0f1b40]">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-6">

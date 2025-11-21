@@ -72,8 +72,8 @@ export function AssessmentResults({
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-[#F9FAFB] px-6">
         <div className="text-center">
-          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
-            <Sparkles className="w-10 h-10 text-green-600" />
+          <div className="w-20 h-20 bg-[#edeaff] rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+            <Sparkles className="w-10 h-10 text-[#6555ff]" />
           </div>
           <h2 className="text-xl text-gray-700">Loading results...</h2>
         </div>
@@ -104,7 +104,7 @@ export function AssessmentResults({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen text-[#0f1b40]">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
         <Button 
           variant="outline" 

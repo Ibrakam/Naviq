@@ -67,15 +67,15 @@ export function CareerResultPage({ results, onComplete }: CareerResultProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 py-6 md:py-8">
+    <div className="min-h-screen text-[#0f1b40] py-6 md:py-8">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 space-y-10 md:space-y-14">
         {/* Header */}
-        <section className="rounded-xl border-2 border-gray-200 bg-white p-6 md:p-8 shadow-md mb-8">
+        <section className="rounded-xl border-2 border-[#dfe3ff] bg-white/90 backdrop-blur p-6 md:p-8 shadow-[0_20px_60px_rgba(73,92,175,0.12)] mb-8">
           <div className="flex items-center gap-2 mb-4">
-            <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-              <CheckCircle2 className="w-5 h-5 text-green-600" />
+            <div className="w-8 h-8 bg-[#edeaff] rounded-lg flex items-center justify-center">
+              <CheckCircle2 className="w-5 h-5 text-[#5b4dff]" />
             </div>
-            <span className="inline-flex items-center gap-2 rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#f3f5ff] px-3 py-1 text-xs font-semibold text-[#4b3fe0]">
               Results Ready
             </span>
           </div>
@@ -89,7 +89,7 @@ export function CareerResultPage({ results, onComplete }: CareerResultProps) {
 
         {/* Top cards */}
         <section className="grid gap-6 md:grid-cols-3 mb-10">
-          <div className="rounded-xl border-2 border-gray-200 bg-white p-6 shadow-md hover:shadow-lg transition-all">
+          <div className="rounded-xl border-2 border-[#dfe3ff] bg-white/90 backdrop-blur p-6 shadow-[0_12px_40px_rgba(73,92,175,0.12)] hover:shadow-[0_16px_50px_rgba(73,92,175,0.16)] transition-all">
             <p className="text-xs uppercase tracking-wider text-gray-500 mb-2 font-medium">Primary Track</p>
             <h3 className="text-xl font-bold text-gray-900 mb-1">{primaryTrack?.name || '—'}</h3>
             <p className="text-sm text-gray-600">best match</p>
@@ -98,16 +98,16 @@ export function CareerResultPage({ results, onComplete }: CareerResultProps) {
                 <div className="flex items-center gap-2">
                   <div className="flex-1 bg-gray-200 rounded-full h-2">
                     <div 
-                      className="bg-green-500 h-2 rounded-full transition-all"
+                      className="bg-gradient-to-r from-[#6555ff] to-[#4fb5ff] h-2 rounded-full transition-all"
                       style={{ width: `${primaryTrack.match_percentage}%` }}
                     ></div>
                   </div>
-                  <span className="text-sm font-semibold text-green-600">{primaryTrack.match_percentage}%</span>
+                  <span className="text-sm font-semibold text-[#5b4dff]">{primaryTrack.match_percentage}%</span>
                 </div>
               </div>
             )}
           </div>
-          <div className="rounded-xl border-2 border-gray-200 bg-white p-6 shadow-md hover:shadow-lg transition-all">
+          <div className="rounded-xl border-2 border-[#dfe3ff] bg-white/90 backdrop-blur p-6 shadow-[0_12px_40px_rgba(73,92,175,0.12)] hover:shadow-[0_16px_50px_rgba(73,92,175,0.16)] transition-all">
             <p className="text-xs uppercase tracking-wider text-gray-500 mb-2 font-medium">Alternative</p>
             <h3 className="text-xl font-bold text-gray-900 mb-1">{secondaryTrack?.name || 'To be determined'}</h3>
             <p className="text-sm text-gray-600">second strongest track</p>
@@ -116,16 +116,16 @@ export function CareerResultPage({ results, onComplete }: CareerResultProps) {
                 <div className="flex items-center gap-2">
                   <div className="flex-1 bg-gray-200 rounded-full h-2">
                     <div 
-                      className="bg-green-400 h-2 rounded-full transition-all"
+                      className="bg-[#7b61ff] h-2 rounded-full transition-all"
                       style={{ width: `${secondaryTrack.match_percentage}%` }}
                     ></div>
                   </div>
-                  <span className="text-sm font-semibold text-green-600">{secondaryTrack.match_percentage}%</span>
+                  <span className="text-sm font-semibold text-[#5b4dff]">{secondaryTrack.match_percentage}%</span>
                 </div>
               </div>
             )}
           </div>
-          <div className="rounded-xl border-2 border-green-200 bg-gradient-to-br from-green-50 to-white p-6 shadow-md hover:shadow-lg transition-all flex flex-col justify-between">
+          <div className="rounded-xl border-2 border-[#dfe3ff] bg-gradient-to-br from-[#f4f5ff] via-white to-[#ecf7ff] p-6 shadow-[0_12px_40px_rgba(73,92,175,0.12)] hover:shadow-[0_16px_50px_rgba(73,92,175,0.16)] transition-all flex flex-col justify-between">
             <div>
               <p className="text-xs uppercase tracking-wider text-gray-500 mb-2 font-medium">Next Step</p>
               <h3 className="text-xl font-bold text-gray-900 mb-1">Complete Your First Simulation</h3>
@@ -133,7 +133,7 @@ export function CareerResultPage({ results, onComplete }: CareerResultProps) {
             </div>
             <Button
               onClick={onComplete}
-              className="mt-6 w-full bg-green-500 hover:bg-green-600 text-white shadow-md hover:shadow-lg transition-all"
+              className="mt-6 w-full"
             >
               Go to Simulations
               <ArrowRight className="w-4 h-4 ml-2" />
@@ -144,15 +144,15 @@ export function CareerResultPage({ results, onComplete }: CareerResultProps) {
         {/* Career tracks */}
         <section className="mb-12">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-              <Target className="w-5 h-5 text-green-600" />
+            <div className="w-10 h-10 bg-[#edeaff] rounded-lg flex items-center justify-center">
+              <Target className="w-5 h-5 text-[#5b4dff]" />
             </div>
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Your Career Directions</h2>
           </div>
           <div className="grid gap-6 md:grid-cols-2">
             {primaryTrack && (
-              <div className="rounded-lg border-2 border-green-300 bg-white p-6 md:p-8 hover:shadow-md transition-all">
-                <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1.5 text-xs font-semibold text-green-700 mb-4">
+              <div className="rounded-lg border-2 border-[#dfe3ff] bg-white/90 backdrop-blur p-6 md:p-8 hover:shadow-[0_12px_40px_rgba(73,92,175,0.12)] transition-all">
+                <span className="inline-flex items-center rounded-full bg-[#f3f5ff] px-3 py-1.5 text-xs font-semibold text-[#4b3fe0] mb-4">
                   Best Match
                 </span>
                 <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-3">{primaryTrack.name}</h3>
@@ -174,8 +174,8 @@ export function CareerResultPage({ results, onComplete }: CareerResultProps) {
               </div>
             )}
             {secondaryTrack && (
-              <div className="rounded-lg border-2 border-gray-300 bg-white p-6 md:p-8 hover:shadow-md transition-all">
-                <span className="inline-flex items-center rounded-full bg-gray-100 px-3 py-1.5 text-xs font-semibold text-gray-700 mb-4">
+              <div className="rounded-lg border-2 border-[#dfe3ff] bg-white/90 backdrop-blur p-6 md:p-8 hover:shadow-[0_12px_40px_rgba(73,92,175,0.12)] transition-all">
+                <span className="inline-flex items-center rounded-full bg-[#f3f5ff] px-3 py-1.5 text-xs font-semibold text-[#4b3fe0] mb-4">
                   Also Suitable for You
                 </span>
                 <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-3">{secondaryTrack.name}</h3>
@@ -203,14 +203,14 @@ export function CareerResultPage({ results, onComplete }: CareerResultProps) {
         {courses.length > 0 && (
           <section className="mb-12">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                <GraduationCap className="w-5 h-5 text-green-600" />
+              <div className="w-10 h-10 bg-[#edeaff] rounded-lg flex items-center justify-center">
+                <GraduationCap className="w-5 h-5 text-[#5b4dff]" />
               </div>
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Recommended Courses</h2>
             </div>
             <div className="grid gap-4 md:grid-cols-2">
               {courses.map((course: any, idx: number) => (
-                <div key={course.title || idx} className="rounded-2xl bg-white p-6 hover:shadow-md transition-all">
+                <div key={course.title || idx} className="rounded-2xl bg-white/90 backdrop-blur p-6 border border-[#dfe3ff] hover:shadow-[0_12px_40px_rgba(73,92,175,0.12)] transition-all">
                   <p className="text-base font-semibold text-gray-900 mb-3">{course.title || course.name}</p>
                   <p className="text-sm text-gray-600">{course.platform}</p>
                 </div>
@@ -222,17 +222,17 @@ export function CareerResultPage({ results, onComplete }: CareerResultProps) {
         {/* Recommended steps */}
         <section className="mb-12">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-              <ListChecks className="w-5 h-5 text-green-600" />
+            <div className="w-10 h-10 bg-[#edeaff] rounded-lg flex items-center justify-center">
+              <ListChecks className="w-5 h-5 text-[#5b4dff]" />
             </div>
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900">Recommended Steps</h2>
           </div>
-          <div className="bg-white rounded-2xl border border-gray-200 p-6 md:p-8">
+          <div className="bg-white/90 backdrop-blur rounded-2xl border border-[#dfe3ff] p-6 md:p-8">
             <div className="grid gap-4 md:grid-cols-2">
               {recommendedSteps.map((step, idx) => (
-                <div key={idx} className="rounded-2xl border border-gray-200 bg-gray-50 px-6 py-5 text-sm md:text-base text-gray-800 hover:bg-gray-100 hover:border-green-300 transition-all flex items-start gap-4">
-                  <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <span className="text-sm font-bold text-green-600">{idx + 1}</span>
+                <div key={idx} className="rounded-2xl border border-[#e0e4f5] bg-[#f6f8ff] px-6 py-5 text-sm md:text-base text-[#0f1b40] hover:border-[#7B61FF]/50 transition-all flex items-start gap-4 shadow-[0_10px_30px_rgba(101,85,255,0.08)]">
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 bg-white/80 border border-[#e0e4f5]">
+                    <span className="text-sm font-bold text-[#6555ff]">{idx + 1}</span>
                   </div>
                   <p className="flex-1 leading-relaxed pt-1">{step}</p>
                 </div>
@@ -435,10 +435,10 @@ export function Assessment({ accessToken, onComplete, onBack }: AssessmentProps)
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
-            <Sparkles className="w-10 h-10 text-green-600" />
+          <div className="w-20 h-20 bg-[#edeaff] rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+            <Sparkles className="w-10 h-10 text-[#5b4dff]" />
           </div>
           <h2 className="text-2xl mb-2">Preparing your chat assistant...</h2>
           <p className="text-gray-600">Almost ready</p>
@@ -452,7 +452,7 @@ export function Assessment({ accessToken, onComplete, onBack }: AssessmentProps)
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 md:py-12">
+    <div className="min-h-screen text-[#0f1b40] py-8 md:py-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
         <div className="flex items-center justify-between">
           <Button variant="ghost" onClick={onBack}>
@@ -466,7 +466,7 @@ export function Assessment({ accessToken, onComplete, onBack }: AssessmentProps)
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div
-                className="bg-green-500 h-2 rounded-full transition-all"
+                className="bg-gradient-to-r from-[#6555ff] to-[#4fb5ff] h-2 rounded-full transition-all"
                 style={{ width: `${completionPercent}%` }}
               />
             </div>
@@ -482,8 +482,8 @@ export function Assessment({ accessToken, onComplete, onBack }: AssessmentProps)
                   <div
                     className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm shadow transition-all ${
                       isUser
-                        ? 'bg-green-500 text-white rounded-br-sm'
-                        : 'bg-white border border-gray-200 text-gray-900 rounded-bl-sm'
+                        ? 'bg-gradient-to-r from-[#6555ff] to-[#4fb5ff] text-white rounded-br-sm'
+                        : 'bg-white/90 backdrop-blur border border-[#dfe3ff] text-gray-900 rounded-bl-sm'
                     }`}
                   >
                     <p className="whitespace-pre-line leading-relaxed">{message.content}</p>
@@ -497,9 +497,9 @@ export function Assessment({ accessToken, onComplete, onBack }: AssessmentProps)
                   <span className="inline-flex items-center gap-1">
                     Assistant is thinking
                     <span className="flex gap-1">
-                      <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-bounce" />
-                      <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-bounce delay-100" />
-                      <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-bounce delay-200" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#7b61ff] animate-bounce" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#7b61ff] animate-bounce delay-100" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#7b61ff] animate-bounce delay-200" />
                     </span>
                   </span>
                 </div>
@@ -521,7 +521,7 @@ export function Assessment({ accessToken, onComplete, onBack }: AssessmentProps)
                 />
                 <Button
                   type="submit"
-                  className="self-end sm:self-stretch sm:w-40 bg-green-500 hover:bg-green-600"
+                  className="self-end sm:self-stretch sm:w-40"
                   disabled={isSending || assistantThinking || !textAnswer.trim()}
                 >
                     Send

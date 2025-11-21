@@ -1,10 +1,12 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, createContext, useContext } from 'react';
 import { Sparkles, Target, BookOpen, User, LogOut, LayoutDashboard, Shield, Trophy, ArrowRight, Clock, CheckCircle2, TrendingUp, Menu } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { useIsMobile } from './ui/use-mobile';
 import { apiRoutes, buildApiUrl } from '../utils/api';
 import { GamificationSection } from './GamificationSection';
+import { ConstellationIcon } from './constellation-icon';
+import { translations, Language } from '../i18n/translations';
 
 interface DashboardProps {
   accessToken: string;
@@ -13,12 +15,26 @@ interface DashboardProps {
   onLogout: () => void;
 }
 
+const LanguageContext = createContext<{
+  lang: Language;
+  setLang: (lang: Language) => void;
+  t: typeof translations['ru'];
+}>({
+  lang: 'ru',
+  setLang: () => {},
+  t: translations.ru,
+});
+
+const useTranslation = () => useContext(LanguageContext);
+
 export function Dashboard({ accessToken, user, onNavigate, onLogout }: DashboardProps) {
   const [profile, setProfile] = useState<any>(null);
   const [simulations, setSimulations] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [lang, setLang] = useState<Language>('ru');
   const isMobile = useIsMobile();
+  const t = translations[lang];
 
   useEffect(() => {
     document.body.style.overflow = mobileMenuOpen ? 'hidden' : '';
@@ -86,23 +102,23 @@ export function Dashboard({ accessToken, user, onNavigate, onLogout }: Dashboard
     const items = [
       {
         key: 'dashboard',
-        label: 'Dashboard',
+        label: t.dashboard.dashboard,
         icon: LayoutDashboard,
-        description: 'Main overview',
+        description: t.dashboard.dashboardDesc,
         action: () => onNavigate('dashboard'),
       },
       {
         key: 'catalog',
-        label: 'Simulations',
+        label: t.dashboard.simulations,
         icon: BookOpen,
-        description: 'Simulation catalog',
+        description: t.dashboard.simulationsDesc,
         action: () => onNavigate('catalog'),
       },
       {
         key: 'profile',
-        label: 'Profile',
+        label: t.dashboard.profile,
         icon: User,
-        description: 'Achievements and progress',
+        description: t.dashboard.profileDesc,
         action: () => onNavigate('profile'),
       },
     ];
@@ -110,23 +126,23 @@ export function Dashboard({ accessToken, user, onNavigate, onLogout }: Dashboard
     if (profile?.role === 'admin') {
       items.push({
         key: 'admin',
-        label: 'Admin',
+        label: t.dashboard.admin,
         icon: Shield,
-        description: 'Admin dashboard',
+        description: t.dashboard.adminDesc,
         action: () => onNavigate('admin'),
       });
     }
     return items;
-  }, [profile?.role, onNavigate]);
+  }, [profile?.role, onNavigate, t]);
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-[#F8F9FB]">
         <div className="text-center">
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
-            <Sparkles className="w-8 h-8 text-green-600" />
+          <div className="w-16 h-16 bg-gradient-to-br from-[#7B61FF]/10 to-[#5B9FFF]/10 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse">
+            <Sparkles className="w-8 h-8 text-[#7B61FF]" />
           </div>
-          <p className="text-gray-600">Loading...</p>
+          <p className="text-gray-600">{t.dashboard.loading}</p>
         </div>
       </div>
     );
@@ -138,54 +154,81 @@ export function Dashboard({ accessToken, user, onNavigate, onLogout }: Dashboard
   ).slice(0, 3);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-white" />
+    <LanguageContext.Provider value={{ lang, setLang, t }}>
+      <div className="min-h-screen text-[#1A2238] bg-[#F8F9FB]">
+        {/* Header */}
+        <header className="bg-white/80 backdrop-blur-xl border-b border-gray-200 sticky top-0 z-50 shadow-sm">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 bg-gradient-to-br from-[#7B61FF] to-[#5B9FFF] rounded-2xl flex items-center justify-center">
+                  <ConstellationIcon type="brain" className="w-5 h-5 text-white" />
+                </div>
+                <span className="text-xl text-[#1A2238]" style={{ fontWeight: 700, letterSpacing: '-0.01em' }}>Naviq</span>
               </div>
-              <span className="text-xl">NAVIQ</span>
-            </div>
 
             {/* Desktop Navigation - visible on desktop */}
             {!isMobile && (
-              <nav className="flex items-center gap-6">
+              <nav className="flex items-center gap-4">
                 <button
                   onClick={() => onNavigate('dashboard')}
-                  className="flex items-center gap-2 text-gray-700 hover:text-green-600 transition-colors"
+                  className="flex items-center gap-2 text-[#1A2238]/70 hover:text-[#7B61FF] transition-colors font-medium"
                 >
                   <LayoutDashboard className="w-5 h-5" />
-                  Dashboard
+                  {t.dashboard.dashboard}
                 </button>
                 <button
                   onClick={() => onNavigate('catalog')}
-                  className="flex items-center gap-2 text-gray-700 hover:text-green-600 transition-colors"
+                  className="flex items-center gap-2 text-[#1A2238]/70 hover:text-[#7B61FF] transition-colors font-medium"
                 >
                   <BookOpen className="w-5 h-5" />
-                  Simulations
+                  {t.dashboard.simulations}
                 </button>
                 <button
                   onClick={() => onNavigate('profile')}
-                  className="flex items-center gap-2 text-gray-700 hover:text-green-600 transition-colors"
+                  className="flex items-center gap-2 text-[#1A2238]/70 hover:text-[#7B61FF] transition-colors font-medium"
                 >
                   <User className="w-5 h-5" />
-                  Profile
+                  {t.dashboard.profile}
                 </button>
                 {profile?.role === 'admin' && (
                   <button
                     onClick={() => onNavigate('admin')}
-                    className="flex items-center gap-2 text-gray-700 hover:text-green-600 transition-colors"
+                    className="flex items-center gap-2 text-[#1A2238]/70 hover:text-[#7B61FF] transition-colors font-medium"
                   >
                     <Shield className="w-5 h-5" />
-                    Admin
+                    {t.dashboard.admin}
                   </button>
                 )}
-                <Button variant="ghost" onClick={onLogout}>
+
+                {/* Language Switcher */}
+                <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1 ml-2">
+                  {[
+                    { code: 'ru' as Language, label: 'РУ' },
+                    { code: 'uz' as Language, label: 'UZ' },
+                    { code: 'en' as Language, label: 'EN' },
+                  ].map((language) => (
+                    <button
+                      key={language.code}
+                      onClick={() => setLang(language.code)}
+                      className={`px-3 py-1 rounded-md text-sm font-medium transition-all ${
+                        lang === language.code
+                          ? 'bg-[#7B61FF] text-white'
+                          : 'text-gray-600 hover:text-[#7B61FF]'
+                      }`}
+                    >
+                      {language.label}
+                    </button>
+                  ))}
+                </div>
+
+                <Button
+                  variant="ghost"
+                  onClick={onLogout}
+                  className="text-[#1A2238]/70 hover:text-[#7B61FF] hover:bg-[#7B61FF]/10"
+                >
                   <LogOut className="w-4 h-4 mr-2" />
-                  Logout
+                  {t.dashboard.logout}
                 </Button>
               </nav>
             )}
@@ -216,11 +259,11 @@ export function Dashboard({ accessToken, user, onNavigate, onLogout }: Dashboard
           <div className="absolute top-0 bottom-0 right-0 w-[78vw] max-w-sm bg-white shadow-2xl rounded-l-3xl border-l border-gray-100 transition-all duration-300 ease-out flex flex-col" style={{ right: "0" }}>
             <div className="px-6 py-6 flex items-center justify-between border-b border-gray-100">
               <div className="flex items-center gap-2">
-                <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center text-white font-bold">
-                  NQ
+                <div className="w-10 h-10 bg-gradient-to-br from-[#7B61FF] to-[#5B9FFF] rounded-xl flex items-center justify-center">
+                  <ConstellationIcon type="brain" className="w-6 h-6 text-white" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Signed in as</p>
+                  <p className="text-sm text-gray-500">{t.dashboard.signedInAs}</p>
                   <p className="text-base font-semibold text-gray-900 truncate max-w-[150px]">
                     {profile?.name || 'Student'}
                   </p>
@@ -238,9 +281,9 @@ export function Dashboard({ accessToken, user, onNavigate, onLogout }: Dashboard
                     item.action();
                     setMobileMenuOpen(false);
                   }}
-                  className="w-full flex items-center gap-4 rounded-2xl border border-gray-100 bg-white px-4 py-4 text-left shadow-sm hover:border-green-200 hover:bg-green-50 hover:text-green-700 transition-all"
+                  className="w-full flex items-center gap-4 rounded-2xl border border-gray-100 bg-white px-4 py-4 text-left shadow-sm hover:border-[#7B61FF]/30 hover:bg-[#7B61FF]/5 hover:text-[#7B61FF] transition-all"
                 >
-                  <div className="w-10 h-10 rounded-xl bg-green-100 text-green-600 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#7B61FF]/10 to-[#5B9FFF]/10 text-[#7B61FF] flex items-center justify-center">
                     <item.icon className="w-5 h-5" />
                   </div>
                   <div>
@@ -260,7 +303,7 @@ export function Dashboard({ accessToken, user, onNavigate, onLogout }: Dashboard
                   }}
                 >
                   <LogOut className="w-4 h-4 mr-2" />
-                  Logout
+                  {t.dashboard.logout}
                 </Button>
               </div>
             </nav>
@@ -268,187 +311,188 @@ export function Dashboard({ accessToken, user, onNavigate, onLogout }: Dashboard
         </div>
       )}
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Section */}
-        <div className="mb-8">
-          <h1 className="text-3xl mb-2">
-            Hello, {profile?.name || 'user'}! 👋
-          </h1>
-          <p className="text-gray-600">
-        Welcome to your personal career navigator
-      </p>
-    </div>
+        {/* Main Content */}
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          {/* Welcome Section */}
+          <div className="mb-8">
+            <h1 className="text-3xl mb-2 text-[#1A2238]" style={{ fontWeight: 700 }}>
+              {t.dashboard.hello}, {profile?.name || 'user'}! 👋
+            </h1>
+            <p className="text-[#1A2238]/70">
+              {t.dashboard.welcome}
+            </p>
+          </div>
 
     {/* Gamification Section */}
     <GamificationSection accessToken={accessToken} />
 
-    {/* Assessment Results Shortcut */}
-    {profile?.assessmentCompleted && (
-            <Card className="p-0 mb-8 bg-gradient-to-br from-green-50 via-white to-green-50/30 border border-green-200 rounded-xl shadow-lg hover:shadow-xl transition-all overflow-hidden">
-            <div className="p-6 md:p-8">
-              <div className="flex flex-col md:flex-row md:items-center gap-6">
-                {/* Left side - Icon and text */}
-                <div className="flex items-start gap-4 flex-1">
+          {/* Assessment Results Shortcut */}
+          {profile?.assessmentCompleted && (
+            <Card className="p-0 mb-8 bg-gradient-to-br from-[#7B61FF]/10 via-white to-[#5B9FFF]/10 border border-[#7B61FF]/20 rounded-xl shadow-lg hover:shadow-xl transition-all overflow-hidden">
+              <div className="p-6 md:p-8">
+                <div className="flex flex-col md:flex-row md:items-center gap-6">
+                  {/* Left side - Icon and text */}
+                  <div className="flex items-start gap-4 flex-1">
+                    <div className="flex-shrink-0">
+                      <div className="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-[#7B61FF] to-[#5B9FFF] rounded-2xl flex items-center justify-center shadow-lg shadow-[#7B61FF]/30">
+                        <CheckCircle2 className="w-8 h-8 md:w-10 md:h-10 text-white" />
+                      </div>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h2 className="text-xl md:text-2xl font-bold text-[#1A2238]">
+                          {t.dashboard.assessmentReady}
+                        </h2>
+                        <TrendingUp className="w-5 h-5 md:w-6 md:h-6 text-[#7B61FF] flex-shrink-0" />
+                      </div>
+                      <p className="text-[#1A2238]/70 text-sm md:text-base leading-relaxed">
+                        {t.dashboard.assessmentReadyDesc}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Right side - Button */}
                   <div className="flex-shrink-0">
-                    <div className="w-16 h-16 md:w-20 md:h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
-                      <CheckCircle2 className="w-8 h-8 md:w-10 md:h-10 text-white" />
-                    </div>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-2">
-                      <h2 className="text-xl md:text-2xl font-bold text-gray-900">
-                        Career Assessment Results Ready
-                      </h2>
-                      <TrendingUp className="w-5 h-5 md:w-6 md:h-6 text-green-600 flex-shrink-0" />
-                    </div>
-                    <p className="text-gray-600 text-sm md:text-base leading-relaxed">
-                      View detailed recommendations and your personal action plan.
-                    </p>
-                  </div>
-                </div>
-                
-                {/* Right side - Button */}
-                <div className="flex-shrink-0">
-                  <Button 
-                    onClick={() => onNavigate('assessment-results')} 
-                    size="lg"
-                    className="w-full md:w-auto bg-green-500 hover:bg-green-600 text-white shadow-md hover:shadow-lg transition-all px-6 py-6 md:py-3 text-base font-semibold rounded-lg"
-                  >
-                    View Results
-                    <ArrowRight className="w-5 h-5 ml-2" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-            
-            {/* Decorative bottom border */}
-            <div className="h-1 bg-gradient-to-r from-green-500 via-green-400 to-green-500"></div>
-      </Card>
-    )}
-
-
-
-    {/* Assessment CTA */}
-    {!profile?.assessmentCompleted && (
-      <Card className="p-6 mb-8 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <Target className="w-6 h-6 text-green-600" />
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900">
-                  Take AI Career Assessment
-                </h2>
-                <p className="text-sm text-green-600 font-medium mt-1">
-                  +30 points
-                </p>
-              </div>
-            </div>
-            <p className="text-gray-600 mb-4">
-              Answer 20 questions and get personalized recommendations from artificial intelligence
-            </p>
-            <Button
-              onClick={() => onNavigate('assessment')}
-              className="bg-green-500 hover:bg-green-600 text-white shadow-sm hover:shadow-md transition-all"
-            >
-              <Target className="w-4 h-4 mr-2" />
-              Start Test
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          </div>
-          <div className="hidden md:block">
-            <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center">
-              <Sparkles className="w-12 h-12 text-green-500" />
-            </div>
-          </div>
-        </div>
-      </Card>
-    )}
-
-        {/* Recommended Simulations */}
-        {profile?.assessmentCompleted && recommendedSimulations.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-4">Recommended for You</h2>
-            <div className="grid md:grid-cols-3 gap-6">
-              {recommendedSimulations.map((sim) => (
-                <Card key={sim.id} className="p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all">
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                      <BookOpen className="w-5 h-5 text-green-600" />
-                    </div>
-                    <span className="px-2 py-1 bg-gray-100 rounded-md text-xs font-medium text-gray-700">
-                      {sim.difficulty}
-                    </span>
-                  </div>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{sim.title}</h3>
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">{sim.description}</p>
-                  <div className="flex items-center justify-between pt-4 border-t border-gray-100">
-                    <span className="text-sm text-gray-500 flex items-center">
-                      <Clock className="w-4 h-4 mr-1" />
-                      {sim.duration}
-                    </span>
                     <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => onNavigate('catalog')}
-                      className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                      onClick={() => onNavigate('assessment-results')}
+                      size="lg"
+                      className="w-full md:w-auto bg-gradient-to-r from-[#7B61FF] to-[#5B9FFF] hover:opacity-90 text-white shadow-md hover:shadow-lg transition-all px-6 py-6 md:py-3 text-base font-semibold rounded-lg"
                     >
-                      Start
-                      <ArrowRight className="w-4 h-4 ml-1" />
+                      {t.dashboard.viewResults}
+                      <ArrowRight className="w-5 h-5 ml-2" />
                     </Button>
                   </div>
-                </Card>
-              ))}
+                </div>
+              </div>
+
+              {/* Decorative bottom border */}
+              <div className="h-1 bg-gradient-to-r from-[#7B61FF] via-[#5B9FFF] to-[#00E5A0]"></div>
+            </Card>
+          )}
+
+
+
+          {/* Assessment CTA */}
+          {!profile?.assessmentCompleted && (
+            <Card className="p-6 mb-8 bg-white border-2 border-[#7B61FF]/20 rounded-xl shadow-lg hover:shadow-xl hover:border-[#7B61FF]/40 transition-all">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-[#7B61FF]/10 to-[#5B9FFF]/10 rounded-xl flex items-center justify-center">
+                      <Target className="w-6 h-6 text-[#7B61FF]" />
+                    </div>
+                    <div>
+                      <h2 className="text-xl font-semibold text-[#1A2238]">
+                        {t.dashboard.takeAssessment}
+                      </h2>
+                      <p className="text-sm text-[#7B61FF] font-medium mt-1">
+                        {t.dashboard.assessmentPoints}
+                      </p>
+                    </div>
+                  </div>
+                  <p className="text-[#1A2238]/70 mb-4">
+                    {t.dashboard.assessmentDesc}
+                  </p>
+                  <Button
+                    onClick={() => onNavigate('assessment')}
+                    className="bg-gradient-to-r from-[#7B61FF] to-[#5B9FFF] hover:opacity-90 text-white shadow-md hover:shadow-lg transition-all"
+                  >
+                    <Target className="w-4 h-4 mr-2" />
+                    {t.dashboard.startTest}
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </div>
+                <div className="hidden md:block">
+                  <div className="w-24 h-24 bg-gradient-to-br from-[#7B61FF]/10 to-[#5B9FFF]/10 rounded-full flex items-center justify-center">
+                    <Sparkles className="w-12 h-12 text-[#7B61FF]" />
+                  </div>
+                </div>
+              </div>
+            </Card>
+          )}
+
+          {/* Recommended Simulations */}
+          {profile?.assessmentCompleted && recommendedSimulations.length > 0 && (
+            <div className="mb-8">
+              <h2 className="text-2xl font-semibold text-[#1A2238] mb-4">{t.dashboard.recommendedForYou}</h2>
+              <div className="grid md:grid-cols-3 gap-6">
+                {recommendedSimulations.map((sim) => (
+                  <Card key={sim.id} className="p-6 bg-white border-2 border-gray-100 rounded-xl shadow-sm hover:shadow-lg hover:border-[#7B61FF]/30 transition-all">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-[#7B61FF]/10 to-[#5B9FFF]/10 rounded-xl flex items-center justify-center">
+                        <BookOpen className="w-5 h-5 text-[#7B61FF]" />
+                      </div>
+                      <span className="px-2 py-1 bg-gray-100 rounded-md text-xs font-medium text-gray-700">
+                        {sim.difficulty}
+                      </span>
+                    </div>
+                    <h3 className="text-lg font-semibold text-[#1A2238] mb-2">{sim.title}</h3>
+                    <p className="text-[#1A2238]/70 text-sm mb-4 line-clamp-2">{sim.description}</p>
+                    <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                      <span className="text-sm text-[#1A2238]/60 flex items-center">
+                        <Clock className="w-4 h-4 mr-1" />
+                        {sim.duration}
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => onNavigate('catalog')}
+                        className="text-[#7B61FF] hover:text-[#5B9FFF] hover:bg-[#7B61FF]/10"
+                      >
+                        {t.dashboard.start}
+                        <ArrowRight className="w-4 h-4 ml-1" />
+                      </Button>
+                    </div>
+                  </Card>
+                ))}
+              </div>
             </div>
+          )}
+
+          {/* Quick Actions */}
+          <div className="grid md:grid-cols-2 gap-6">
+            <Card className="p-6 bg-white border-2 border-gray-100 rounded-xl shadow-sm hover:shadow-lg hover:border-[#7B61FF]/30 transition-all">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-[#7B61FF]/10 to-[#5B9FFF]/10 rounded-xl flex items-center justify-center">
+                  <BookOpen className="w-5 h-5 text-[#7B61FF]" />
+                </div>
+                <h3 className="text-xl font-semibold text-[#1A2238]">{t.dashboard.exploreSimulations}</h3>
+              </div>
+              <p className="text-[#1A2238]/70 mb-4">
+                {t.dashboard.exploreSimulationsDesc}
+              </p>
+              <Button
+                onClick={() => onNavigate('catalog')}
+                variant="outline"
+                className="border-2 border-gray-200 hover:bg-[#7B61FF]/5 hover:border-[#7B61FF]/40 hover:text-[#7B61FF]"
+              >
+                {t.dashboard.openCatalog}
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Card>
+
+            <Card className="p-6 bg-white border-2 border-gray-100 rounded-xl shadow-sm hover:shadow-lg hover:border-[#7B61FF]/30 transition-all">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-[#7B61FF]/10 to-[#5B9FFF]/10 rounded-xl flex items-center justify-center">
+                  <User className="w-5 h-5 text-[#7B61FF]" />
+                </div>
+                <h3 className="text-xl font-semibold text-[#1A2238]">{t.dashboard.yourProfile}</h3>
+              </div>
+              <p className="text-[#1A2238]/70 mb-4">
+                {t.dashboard.yourProfileDesc}
+              </p>
+              <Button
+                onClick={() => onNavigate('profile')}
+                variant="outline"
+                className="border-2 border-gray-200 hover:bg-[#7B61FF]/5 hover:border-[#7B61FF]/40 hover:text-[#7B61FF]"
+              >
+                {t.dashboard.openProfile}
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </Card>
           </div>
-        )}
-
-        {/* Quick Actions */}
-        <div className="grid md:grid-cols-2 gap-6">
-          <Card className="p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                <BookOpen className="w-5 h-5 text-green-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900">Explore Simulations</h3>
-            </div>
-            <p className="text-gray-600 mb-4">
-              Browse the entire catalog of career simulations and choose your area of interest
-            </p>
-            <Button
-              onClick={() => onNavigate('catalog')}
-              variant="outline"
-              className="border-gray-200 hover:bg-green-50 hover:border-green-200 hover:text-green-700"
-            >
-              Open Catalog
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          </Card>
-
-          <Card className="p-6 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-all">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
-                <User className="w-5 h-5 text-green-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900">Your Profile</h3>
-            </div>
-            <p className="text-gray-600 mb-4">
-              View your achievements, completed simulations, and certificates
-            </p>
-            <Button
-              onClick={() => onNavigate('profile')}
-              variant="outline"
-              className="border-gray-200 hover:bg-green-50 hover:border-green-200 hover:text-green-700"
-            >
-              Open Profile
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          </Card>
-        </div>
-      </main>
-    </div>
+        </main>
+      </div>
+    </LanguageContext.Provider>
   );
 }

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { apiRoutes, buildApiUrl } from './utils/api';
-import { Landing } from './components/Landing';
+import { NewLanding } from './components/NewLanding';
 import { Login } from './components/Login';
 import { Signup } from './components/Signup';
 import { Dashboard } from './components/Dashboard';
@@ -174,9 +174,9 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen">
       {currentPage === 'landing' && (
-        <Landing
+        <NewLanding
           onLogin={() => navigateTo('login')}
           onSignup={() => navigateTo('signup')}
         />

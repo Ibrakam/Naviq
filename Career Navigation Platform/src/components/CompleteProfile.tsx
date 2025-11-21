@@ -240,7 +240,7 @@ export function CompleteProfile({
   };
 
   return (
-    <div className="min-h-screen flex bg-gray-50">
+    <div className="min-h-screen flex text-[#0f1b40]">
       {/* Left Side - Illustration */}
       <div className="hidden lg:flex flex-1 bg-gradient-to-br from-green-400 via-green-500 to-green-600 p-12 text-white items-center justify-center">
         <div className="max-w-lg">
