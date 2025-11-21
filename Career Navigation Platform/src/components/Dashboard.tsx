@@ -293,7 +293,32 @@ export function Dashboard({ accessToken, user, onNavigate, onLogout }: Dashboard
                   <ArrowRight className="ml-auto w-4 h-4 text-gray-400" />
                 </button>
               ))}
-              <div className="pt-4 mt-6 border-t border-gray-100">
+
+              {/* Language Switcher for Mobile */}
+              <div className="pt-4 mt-4 border-t border-gray-100">
+                <p className="text-xs text-gray-500 mb-2 px-2">{t.dashboard.language || 'Язык'}</p>
+                <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
+                  {[
+                    { code: 'ru' as Language, label: 'РУ' },
+                    { code: 'uz' as Language, label: 'UZ' },
+                    { code: 'en' as Language, label: 'EN' },
+                  ].map((language) => (
+                    <button
+                      key={language.code}
+                      onClick={() => setLang(language.code)}
+                      className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all ${
+                        lang === language.code
+                          ? 'bg-[#7B61FF] text-white'
+                          : 'text-gray-600 hover:text-[#7B61FF]'
+                      }`}
+                    >
+                      {language.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="pt-4 mt-4 border-t border-gray-100">
                 <Button
                   variant="ghost"
                   className="w-full justify-start text-red-500 hover:bg-red-50"
@@ -312,13 +337,13 @@ export function Dashboard({ accessToken, user, onNavigate, onLogout }: Dashboard
       )}
 
         {/* Main Content */}
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           {/* Welcome Section */}
-          <div className="mb-8">
-            <h1 className="text-3xl mb-2 text-[#1A2238]" style={{ fontWeight: 700 }}>
+          <div className="mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl mb-2 text-[#1A2238]" style={{ fontWeight: 700 }}>
               {t.dashboard.hello}, {profile?.name || 'user'}! 👋
             </h1>
-            <p className="text-[#1A2238]/70">
+            <p className="text-sm sm:text-base text-[#1A2238]/70">
               {t.dashboard.welcome}
             </p>
           </div>

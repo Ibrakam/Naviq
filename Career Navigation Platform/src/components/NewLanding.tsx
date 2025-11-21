@@ -1,6 +1,6 @@
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { motion, useScroll, useTransform } from 'motion/react';
-import { ArrowRight, ChevronRight, Check, Sparkles, Star, TrendingUp, Users, Award, Zap, Target, Rocket, Brain, Play, Trophy, Code, Palette, TrendingUp as Marketing, DollarSign, UserCheck, Briefcase, Globe } from 'lucide-react';
+import { ArrowRight, ChevronRight, Check, Sparkles, Star, TrendingUp, Users, Award, Zap, Target, Rocket, Brain, Play, Trophy, Code, Palette, TrendingUp as Marketing, DollarSign, UserCheck, Briefcase, Globe, Menu, X } from 'lucide-react';
 import { Button } from './ui/button';
 import { Badge } from './ui/badge';
 import { Card } from './ui/card';
@@ -39,6 +39,13 @@ export function NewLanding({ onLogin, onSignup }: NewLandingProps) {
     });
   }, [scrollYProgress]);
 
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (document.body) {
+      document.body.style.overflow = 'auto';
+    }
+  }, []);
+
   return (
     <LanguageContext.Provider value={{ lang, setLang, t }}>
       <div className="min-h-screen bg-[#F8F9FB] overflow-x-hidden">
@@ -60,9 +67,6 @@ export function NewLanding({ onLogin, onSignup }: NewLandingProps) {
         {/* Job Simulations */}
         <JobSimulations />
 
-        {/* Social Proof */}
-        <SocialProof />
-
         {/* Final CTA */}
         <FinalCTA onSignup={onSignup} />
 
@@ -75,6 +79,7 @@ export function NewLanding({ onLogin, onSignup }: NewLandingProps) {
 
 function Navigation({ scrollProgress, onLogin, onSignup }: { scrollProgress: number; onLogin: () => void; onSignup: () => void }) {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { lang, setLang, t } = useTranslation();
 
   useEffect(() => {
@@ -85,6 +90,18 @@ function Navigation({ scrollProgress, onLogin, onSignup }: { scrollProgress: num
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [mobileMenuOpen]);
+
   const languages: { code: Language; label: string }[] = [
     { code: 'ru', label: 'РУ' },
     { code: 'uz', label: 'UZ' },
@@ -92,41 +109,42 @@ function Navigation({ scrollProgress, onLogin, onSignup }: { scrollProgress: num
   ];
 
   return (
-    <motion.header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? 'bg-white/80 backdrop-blur-xl shadow-lg shadow-black/5' : 'bg-transparent'
-      }`}
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.6 }}
-    >
-      <div className="max-w-7xl mx-auto px-6 py-4">
+    <>
+      <motion.header
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+          isScrolled ? 'bg-white/80 backdrop-blur-xl shadow-lg shadow-black/5' : 'bg-transparent'
+        }`}
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4">
         <div className="flex items-center justify-between">
           {/* Logo */}
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-gradient-to-br from-[#7B61FF] to-[#5B9FFF] rounded-2xl flex items-center justify-center">
               <ConstellationIcon type="brain" className="w-5 h-5 text-white" />
             </div>
-            <span className="text-[#1A2238] tracking-tight" style={{ fontSize: '20px', fontWeight: 700 }}>Naviq</span>
+            <span className="text-[#1A2238] tracking-tight" style={{ fontSize: '18px', fontWeight: 700 }}>Naviq</span>
           </div>
 
-          {/* Navigation Links */}
-          <nav className="hidden md:flex items-center gap-8">
-            <a href="#platform" className="text-[#1A2238] hover:text-[#7B61FF] transition-colors">{t.nav.platform}</a>
-            <a href="#careers" className="text-[#1A2238] hover:text-[#7B61FF] transition-colors">{t.nav.careers}</a>
-            <a href="#simulations" className="text-[#1A2238] hover:text-[#7B61FF] transition-colors">{t.nav.simulations}</a>
-            <a href="#about" className="text-[#1A2238] hover:text-[#7B61FF] transition-colors">{t.nav.about}</a>
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center gap-6 lg:gap-8">
+            <a href="#platform" className="text-[#1A2238] hover:text-[#7B61FF] transition-colors text-sm lg:text-base">{t.nav.platform}</a>
+            <a href="#careers" className="text-[#1A2238] hover:text-[#7B61FF] transition-colors text-sm lg:text-base">{t.nav.careers}</a>
+            <a href="#simulations" className="text-[#1A2238] hover:text-[#7B61FF] transition-colors text-sm lg:text-base">{t.nav.simulations}</a>
+            <a href="#about" className="text-[#1A2238] hover:text-[#7B61FF] transition-colors text-sm lg:text-base">{t.nav.about}</a>
           </nav>
 
-          {/* CTA Buttons + Language Switcher */}
-          <div className="flex items-center gap-4">
+          {/* Desktop CTA Buttons + Language Switcher */}
+          <div className="hidden md:flex items-center gap-3 lg:gap-4">
             {/* Language Switcher */}
             <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
               {languages.map((language) => (
                 <button
                   key={language.code}
                   onClick={() => setLang(language.code)}
-                  className={`px-3 py-1 rounded-md text-sm font-medium transition-all ${
+                  className={`px-2 lg:px-3 py-1 rounded-md text-xs lg:text-sm font-medium transition-all ${
                     lang === language.code
                       ? 'bg-[#7B61FF] text-white'
                       : 'text-gray-600 hover:text-[#7B61FF]'
@@ -137,11 +155,39 @@ function Navigation({ scrollProgress, onLogin, onSignup }: { scrollProgress: num
               ))}
             </div>
 
-            <Button variant="ghost" className="hidden md:inline-flex" onClick={onLogin}>{t.nav.login}</Button>
-            <Button className="bg-gradient-to-r from-[#7B61FF] to-[#5B9FFF] text-white hover:opacity-90 transition-opacity shadow-lg shadow-[#7B61FF]/30" onClick={onSignup}>
-              {t.nav.startTest}
+            <Button variant="ghost" className="text-sm lg:text-base" onClick={onLogin}>{t.nav.login}</Button>
+            <Button className="bg-gradient-to-r from-[#7B61FF] to-[#5B9FFF] text-white hover:opacity-90 transition-opacity shadow-lg shadow-[#7B61FF]/30 text-sm lg:text-base" onClick={onSignup}>
+              <span className="hidden lg:inline">{t.nav.startTest}</span>
+              <span className="lg:hidden">{t.nav.startTest.split(' ')[0]}</span>
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
+          </div>
+
+          {/* Mobile Menu Button + Language Switcher */}
+          <div className="flex md:hidden items-center gap-2">
+            {/* Compact Language Switcher for Mobile */}
+            <div className="flex items-center gap-0.5 bg-gray-100 rounded-lg p-0.5">
+              {languages.map((language) => (
+                <button
+                  key={language.code}
+                  onClick={() => setLang(language.code)}
+                  className={`px-2 py-1 rounded-md text-xs font-medium transition-all ${
+                    lang === language.code
+                      ? 'bg-[#7B61FF] text-white'
+                      : 'text-gray-600'
+                  }`}
+                >
+                  {language.label}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="p-2 text-[#1A2238] hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
           </div>
         </div>
       </div>
@@ -154,6 +200,136 @@ function Navigation({ scrollProgress, onLogin, onSignup }: { scrollProgress: num
         />
       </div>
     </motion.header>
+
+    {/* Mobile Menu Overlay - Outside of header */}
+    {mobileMenuOpen && (
+      <div className="fixed inset-0 z-[60] md:hidden">
+        {/* Backdrop */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 bg-black/40 backdrop-blur-sm"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+
+        {/* Slide-in Menu */}
+        <motion.div
+          initial={{ x: '100%' }}
+          animate={{ x: 0 }}
+          exit={{ x: '100%' }}
+          transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+          className="fixed top-0 bottom-0 right-0 w-[85vw] max-w-sm bg-white shadow-2xl flex flex-col"
+        >
+            {/* Menu Header */}
+            <div className="px-6 py-6 border-b border-gray-100 bg-gradient-to-r from-[#7B61FF]/5 to-[#5B9FFF]/5">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-10 h-10 bg-gradient-to-br from-[#7B61FF] to-[#5B9FFF] rounded-2xl flex items-center justify-center">
+                    <ConstellationIcon type="brain" className="w-6 h-6 text-white" />
+                  </div>
+                  <span className="text-xl text-[#1A2238]" style={{ fontWeight: 700 }}>Naviq</span>
+                </div>
+                <button
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                >
+                  <X className="w-6 h-6 text-[#1A2238]" />
+                </button>
+              </div>
+
+              {/* Language Switcher in Header */}
+              <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+                {[
+                  { code: 'ru', label: 'РУ' },
+                  { code: 'uz', label: 'UZ' },
+                  { code: 'en', label: 'EN' },
+                ].map((language) => (
+                  <button
+                    key={language.code}
+                    onClick={() => setLang(language.code as Language)}
+                    className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all ${
+                      lang === language.code
+                        ? 'bg-[#7B61FF] text-white'
+                        : 'text-gray-600 hover:text-[#7B61FF]'
+                    }`}
+                  >
+                    {language.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Menu Items */}
+            <nav className="flex-1 overflow-y-auto px-4 py-6">
+              <div className="space-y-2">
+                <a
+                  href="#platform"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-[#7B61FF]/10 hover:to-[#5B9FFF]/10 transition-all group"
+                >
+                  <div className="w-10 h-10 bg-gradient-to-br from-[#7B61FF]/10 to-[#5B9FFF]/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Target className="w-5 h-5 text-[#7B61FF]" />
+                  </div>
+                  <span className="text-[#1A2238] font-medium group-hover:text-[#7B61FF]">{t.nav.platform}</span>
+                </a>
+
+                <a
+                  href="#careers"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-[#7B61FF]/10 hover:to-[#5B9FFF]/10 transition-all group"
+                >
+                  <div className="w-10 h-10 bg-gradient-to-br from-[#7B61FF]/10 to-[#5B9FFF]/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Briefcase className="w-5 h-5 text-[#7B61FF]" />
+                  </div>
+                  <span className="text-[#1A2238] font-medium group-hover:text-[#7B61FF]">{t.nav.careers}</span>
+                </a>
+
+                <a
+                  href="#simulations"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-[#7B61FF]/10 hover:to-[#5B9FFF]/10 transition-all group"
+                >
+                  <div className="w-10 h-10 bg-gradient-to-br from-[#7B61FF]/10 to-[#5B9FFF]/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Play className="w-5 h-5 text-[#7B61FF]" />
+                  </div>
+                  <span className="text-[#1A2238] font-medium group-hover:text-[#7B61FF]">{t.nav.simulations}</span>
+                </a>
+
+                <a
+                  href="#about"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-[#7B61FF]/10 hover:to-[#5B9FFF]/10 transition-all group"
+                >
+                  <div className="w-10 h-10 bg-gradient-to-br from-[#7B61FF]/10 to-[#5B9FFF]/10 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Globe className="w-5 h-5 text-[#7B61FF]" />
+                  </div>
+                  <span className="text-[#1A2238] font-medium group-hover:text-[#7B61FF]">{t.nav.about}</span>
+                </a>
+              </div>
+            </nav>
+
+            {/* Menu Footer */}
+            <div className="px-4 py-6 border-t border-gray-100 space-y-3 bg-gradient-to-r from-[#7B61FF]/5 to-[#5B9FFF]/5">
+              <Button
+                variant="outline"
+                className="w-full border-2 border-[#7B61FF]/30 hover:border-[#7B61FF] hover:bg-[#7B61FF]/10 text-[#7B61FF]"
+                onClick={() => { onLogin(); setMobileMenuOpen(false); }}
+              >
+                {t.nav.login}
+              </Button>
+              <Button
+                className="w-full bg-gradient-to-r from-[#7B61FF] to-[#5B9FFF] text-white hover:opacity-90 transition-opacity shadow-lg shadow-[#7B61FF]/30"
+                onClick={() => { onSignup(); setMobileMenuOpen(false); }}
+              >
+                {t.nav.startTest}
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+          </motion.div>
+        </div>
+      )}
+    </>
   );
 }
 
@@ -170,14 +346,14 @@ function HeroSection({ onSignup }: { onSignup: () => void }) {
         <div className="absolute bottom-20 left-10 w-96 h-96 bg-[#00E5A0]/10 rounded-full blur-3xl" />
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 py-20 relative z-10">
-        <div className="grid md:grid-cols-[1.2fr_0.8fr] gap-16 items-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 sm:py-16 md:py-20 relative z-10">
+        <div className="grid md:grid-cols-[1.2fr_0.8fr] gap-8 md:gap-16 items-center">
           {/* Left Side - Content */}
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8 }}
-            className="space-y-8"
+            className="space-y-6 sm:space-y-8"
           >
             {/* Badge */}
             <motion.div
@@ -193,32 +369,32 @@ function HeroSection({ onSignup }: { onSignup: () => void }) {
 
             {/* Headline */}
             <div className="space-y-4">
-              <h1 className="text-[#1A2238] leading-tight" style={{ fontSize: '72px', fontWeight: 800, letterSpacing: '-0.02em' }}>
+              <h1 className="text-[32px] sm:text-[48px] md:text-[56px] lg:text-[72px] text-[#1A2238] leading-tight" style={{ fontWeight: 800, letterSpacing: '-0.02em' }}>
                 {t.hero.headline}
               </h1>
-              <p className="text-[#1A2238]/70 max-w-xl" style={{ fontSize: '20px', lineHeight: '1.6' }}>
+              <p className="text-base sm:text-lg md:text-xl text-[#1A2238]/70 max-w-xl leading-relaxed">
                 {t.hero.description}
               </p>
             </div>
 
             {/* CTA Row */}
-            <div className="flex flex-wrap gap-4">
-              <Button size="lg" className="bg-gradient-to-r from-[#7B61FF] to-[#5B9FFF] text-white hover:opacity-90 transition-all shadow-xl shadow-[#7B61FF]/30 hover:shadow-2xl hover:shadow-[#7B61FF]/40 hover:scale-105" onClick={onSignup}>
+            <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4">
+              <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-[#7B61FF] to-[#5B9FFF] text-white hover:opacity-90 transition-all shadow-xl shadow-[#7B61FF]/30 hover:shadow-2xl hover:shadow-[#7B61FF]/40 hover:scale-105" onClick={onSignup}>
                 {t.hero.startCareerTest}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <Button size="lg" variant="outline" className="border-2 border-[#1A2238]/20 hover:border-[#7B61FF] hover:text-[#7B61FF] transition-all">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto border-2 border-[#1A2238]/20 hover:border-[#7B61FF] hover:text-[#7B61FF] transition-all">
                 {t.hero.howItWorks}
                 <ChevronRight className="ml-2 h-5 w-5" />
               </Button>
             </div>
 
             {/* Trust Row */}
-            <div className="pt-8 space-y-4">
-              <p className="text-[#1A2238]/60">{t.hero.usedIn}</p>
-              <div className="flex flex-wrap gap-8 items-center opacity-60">
+            <div className="pt-6 sm:pt-8 space-y-3 sm:space-y-4">
+              <p className="text-sm sm:text-base text-[#1A2238]/60">{t.hero.usedIn}</p>
+              <div className="flex flex-wrap gap-3 sm:gap-8 items-center opacity-60">
                 {['TUIT', 'WIUT', 'Inha', 'Westminster', 'MDIS'].map((uni) => (
-                  <div key={uni} className="px-4 py-2 bg-[#1A2238]/5 rounded-2xl">
+                  <div key={uni} className="px-3 sm:px-4 py-1.5 sm:py-2 bg-[#1A2238]/5 rounded-2xl text-sm">
                     {uni}
                   </div>
                 ))}
@@ -232,7 +408,7 @@ function HeroSection({ onSignup }: { onSignup: () => void }) {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="relative"
+            className="relative hidden md:block"
           >
             <DashboardMockup t={t} />
           </motion.div>
@@ -414,18 +590,18 @@ function ValueProposition() {
   ];
 
   return (
-    <section className="py-24 relative" id="platform">
-      <div className="max-w-7xl mx-auto px-6">
+    <section className="py-12 sm:py-16 md:py-24 relative" id="platform">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-[#1A2238] mb-4" style={{ fontSize: '48px', fontWeight: 800, letterSpacing: '-0.015em' }}>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl text-[#1A2238] mb-4" style={{ fontWeight: 800, letterSpacing: '-0.015em' }}>
             {t.value.title}
           </h2>
-          <p className="text-[#1A2238]/70 max-w-2xl mx-auto" style={{ fontSize: '18px', lineHeight: '1.6' }}>
+          <p className="text-base sm:text-lg text-[#1A2238]/70 max-w-2xl mx-auto leading-relaxed">
             {t.value.subtitle}
           </p>
         </motion.div>
@@ -520,18 +696,18 @@ function HowItWorks() {
   ];
 
   return (
-    <section className="py-24 bg-gradient-to-b from-white to-[#F8F9FB]">
-      <div className="max-w-7xl mx-auto px-6">
+    <section className="py-12 sm:py-16 md:py-24 bg-gradient-to-b from-white to-[#F8F9FB]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-[#1A2238] mb-4" style={{ fontSize: '48px', fontWeight: 800, letterSpacing: '-0.015em' }}>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl text-[#1A2238] mb-4" style={{ fontWeight: 800, letterSpacing: '-0.015em' }}>
             {t.howItWorks.title}
           </h2>
-          <p className="text-[#1A2238]/70 max-w-2xl mx-auto" style={{ fontSize: '18px', lineHeight: '1.6' }}>
+          <p className="text-base sm:text-lg text-[#1A2238]/70 max-w-2xl mx-auto leading-relaxed">
             {t.howItWorks.subtitle}
           </p>
         </motion.div>
@@ -595,18 +771,18 @@ function CareerTracks() {
   ];
 
   return (
-    <section id="careers" className="py-24">
-      <div className="max-w-7xl mx-auto px-6">
+    <section id="careers" className="py-12 sm:py-16 md:py-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-[#1A2238] mb-4" style={{ fontSize: '48px', fontWeight: 800, letterSpacing: '-0.015em' }}>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl text-[#1A2238] mb-4" style={{ fontWeight: 800, letterSpacing: '-0.015em' }}>
             {t.careers.title}
           </h2>
-          <p className="text-[#1A2238]/70 max-w-2xl mx-auto" style={{ fontSize: '18px', lineHeight: '1.6' }}>
+          <p className="text-base sm:text-lg text-[#1A2238]/70 max-w-2xl mx-auto leading-relaxed">
             {t.careers.subtitle}
           </p>
         </motion.div>
@@ -695,18 +871,18 @@ function JobSimulations() {
   ];
 
   return (
-    <section id="simulations" className="py-24 bg-gradient-to-b from-[#F8F9FB] to-white">
-      <div className="max-w-7xl mx-auto px-6">
+    <section id="simulations" className="py-12 sm:py-16 md:py-24 bg-gradient-to-b from-[#F8F9FB] to-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-[#1A2238] mb-4" style={{ fontSize: '48px', fontWeight: 800, letterSpacing: '-0.015em' }}>
+          <h2 className="text-3xl sm:text-4xl md:text-5xl text-[#1A2238] mb-4" style={{ fontWeight: 800, letterSpacing: '-0.015em' }}>
             {t.simulations.title}
           </h2>
-          <p className="text-[#1A2238]/70 max-w-2xl mx-auto" style={{ fontSize: '18px', lineHeight: '1.6' }}>
+          <p className="text-base sm:text-lg text-[#1A2238]/70 max-w-2xl mx-auto leading-relaxed">
             {t.simulations.subtitle}
           </p>
         </motion.div>
@@ -763,129 +939,11 @@ function JobSimulations() {
   );
 }
 
-function SocialProof() {
-  const { t } = useTranslation();
-
-  const testimonials = [
-    {
-      author: 'Азиза Рахимова',
-      university: 'TUIT',
-      role: 'Junior Product Manager',
-      photo: 'https://images.unsplash.com/photo-1613483661929-03d7dd71b693?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwcm9mZXNzaW9uYWwlMjB5b3VuZyUyMHBlcnNvbnxlbnwxfHx8fDE3NjM1NjQxMjZ8MA&ixlib=rb-4.1.0&q=80&w=1080',
-    },
-    {
-      author: 'Даврон Каримов',
-      university: 'WIUT',
-      role: 'Data Analyst',
-      photo: 'https://images.unsplash.com/photo-1752650734567-fca336c8b77a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjB3b3Jrc3BhY2UlMjBjYXJlZXJ8ZW58MXx8fHwxNzYzNTY0MTI1fDA&ixlib=rb-4.1.0&q=80&w=1080',
-    },
-  ];
-
-  const metrics = [
-    { number: 12000, suffix: '+', labelKey: 'students' },
-    { number: 15, suffix: '+', labelKey: 'universities' },
-    { number: 5000, suffix: '+', labelKey: 'certificates' },
-    { number: 87, suffix: '%', labelKey: 'foundJob' },
-  ];
-
-  return (
-    <section className="py-24 bg-gradient-to-br from-[#1A2238] to-[#2A3F5F] text-white relative overflow-hidden">
-      <div className="absolute inset-0 opacity-10">
-        <AnimatedBackground />
-      </div>
-
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <div className="grid lg:grid-cols-2 gap-16">
-          {/* Left - Testimonials */}
-          <div className="space-y-8">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="mb-8" style={{ fontSize: '48px', fontWeight: 800, letterSpacing: '-0.015em' }}>
-                {t.social.successStories}
-              </h2>
-            </motion.div>
-
-            {testimonials.map((testimonial, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.2 }}
-              >
-                <Card className="p-6 bg-white/10 backdrop-blur-xl border border-white/20">
-                  <div className="space-y-4">
-                    <p className="text-white/90" style={{ fontSize: '18px', lineHeight: '1.6' }}>
-                      "{i === 0 ? t.social.testimonial1 : t.social.testimonial2}"
-                    </p>
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#7B61FF] to-[#5B9FFF] p-0.5">
-                        <div className="w-full h-full rounded-full overflow-hidden">
-                          <img src={testimonial.photo} alt={testimonial.author} className="w-full h-full object-cover" />
-                        </div>
-                      </div>
-                      <div>
-                        <p style={{ fontSize: '16px', fontWeight: 600 }}>{testimonial.author}</p>
-                        <p className="text-white/70" style={{ fontSize: '14px' }}>
-                          {testimonial.university} • {testimonial.role}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Right - Metrics */}
-          <div className="space-y-8">
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="mb-8" style={{ fontSize: '48px', fontWeight: 800, letterSpacing: '-0.015em' }}>
-                {t.social.inNumbers}
-              </h2>
-            </motion.div>
-
-            <div className="grid grid-cols-2 gap-6">
-              {metrics.map((metric, i) => (
-                <motion.div
-                  key={i}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                >
-                  <Card className="p-6 bg-white/10 backdrop-blur-xl border border-white/20 hover:bg-white/15 transition-all">
-                    <div className="space-y-2">
-                      <div style={{ fontSize: '48px', fontWeight: 800 }} className="text-[#00E5A0]">
-                        <CounterAnimation end={metric.number} suffix={metric.suffix} />
-                      </div>
-                      <p className="text-white/80" style={{ fontSize: '14px' }}>
-                        {t.social[metric.labelKey as keyof typeof t.social]}
-                      </p>
-                    </div>
-                  </Card>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function FinalCTA({ onSignup }: { onSignup: () => void }) {
   const { t } = useTranslation();
 
   return (
-    <section className="py-24 relative overflow-hidden" id="about">
+    <section className="py-12 sm:py-16 md:py-24 relative overflow-hidden" id="about">
       {/* Background with gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#1A2238] via-[#2A3F5F] to-[#7B61FF]" />
 
@@ -894,18 +952,18 @@ function FinalCTA({ onSignup }: { onSignup: () => void }) {
         <AnimatedBackground />
       </div>
 
-      <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           className="space-y-8"
         >
-          <h2 className="text-white" style={{ fontSize: '56px', fontWeight: 800, letterSpacing: '-0.02em', lineHeight: '1.1' }}>
+          <h2 className="text-white text-3xl sm:text-4xl md:text-5xl lg:text-[56px]" style={{ fontWeight: 800, letterSpacing: '-0.02em', lineHeight: '1.1' }}>
             {t.cta.title}
           </h2>
 
-          <p className="text-white/80 max-w-2xl mx-auto" style={{ fontSize: '20px', lineHeight: '1.6' }}>
+          <p className="text-white/80 max-w-2xl mx-auto text-base sm:text-lg md:text-xl leading-relaxed">
             {t.cta.subtitle}
           </p>
 
@@ -969,8 +1027,8 @@ function Footer() {
   ];
 
   return (
-    <footer className="bg-[#1A2238] text-white pt-20 pb-8">
-      <div className="max-w-7xl mx-auto px-6">
+    <footer className="bg-[#1A2238] text-white pt-12 sm:pt-16 md:pt-20 pb-6 sm:pb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Top gradient border */}
         <div className="h-1 bg-gradient-to-r from-[#7B61FF] via-[#5B9FFF] to-[#00E5A0] mb-12" />
 
