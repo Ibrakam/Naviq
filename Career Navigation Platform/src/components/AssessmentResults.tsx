@@ -4,6 +4,7 @@ import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { apiRoutes, buildApiUrl } from '../utils/api';
 import { CareerResultPage } from './Assessment';
+import { CareerResultsModern } from './CareerResultsModern';
 
 interface AssessmentResultsProps {
   accessToken: string;
@@ -19,19 +20,51 @@ export function AssessmentResults({
   const [results, setResults] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // Move viewMode hook to top to avoid conditional hook call
+  const [viewMode, setViewMode] = useState<'modern' | 'classic'>('modern');
 
   const normalizeResult = (data: any) => {
+    // Map tracks for both modern and classic views
+    const tracks = data.top_tracks?.map((track: any, index: number) => ({
+      id: track.track_id || track.name?.toLowerCase().replace(/\s+/g, '_') || `track-${index}`,
+      name: track.name,
+      match: track.match_percentage,
+      match_percentage: track.match_percentage,
+      description: track.description,
+      reason: track.reason,
+    })) || [];
+
+    // Use skills radar from backend if available, otherwise generate fallback
+    const skillsRadar = data.skills_radar || [
+      { skill: 'Аналитика', value: Math.min(95, (tracks[0]?.match || 80) + Math.random() * 10) },
+      { skill: 'Коммуникация', value: Math.min(90, 75 + Math.random() * 15) },
+      { skill: 'Креативность', value: Math.min(85, 70 + Math.random() * 15) },
+      { skill: 'Технические навыки', value: Math.min(92, (tracks[0]?.match || 75) + Math.random() * 10) },
+      { skill: 'Лидерство', value: Math.min(88, 70 + Math.random() * 18) },
+    ];
+
+    // Determine potential level based on top match
+    const topMatch = tracks[0]?.match || 0;
+    const potentialLevel = topMatch >= 80 ? 'Высокий' : topMatch >= 60 ? 'Средний' : 'Начальный';
+
+    // Determine top strength from radar data
+    const topStrength = skillsRadar.reduce((max, curr) =>
+      curr.value > max.value ? curr : max, skillsRadar[0]
+    ).skill;
+
     return {
       explanation: data.top_tracks?.[0]?.reason || data.explanation,
       primaryTrack: data.primary_track || data.top_tracks?.[0]?.track_id,
-      tracks:
-        data.top_tracks?.map((track: any, index: number) => ({
-          id: track.track_id || track.name?.toLowerCase().replace(/\s+/g, '_') || `track-${index}`,
-          name: track.name,
-          match: track.match_percentage,
-          description: track.description,
-          reason: track.reason,
-        })) || [],
+      primary_track: data.primary_track || data.top_tracks?.[0]?.track_id,
+      tracks: tracks,
+      top_tracks: data.top_tracks || [],
+
+      // Fields for CareerResultsModern
+      skills_radar: skillsRadar,
+      career_matches: tracks.slice(0, 3),
+      potential_level: potentialLevel,
+      top_strength: topStrength,
+
       suggestedCourses:
         data.courses?.map((course: any) => ({
           title: course.name,
@@ -43,6 +76,7 @@ export function AssessmentResults({
           task,
         })) || [],
       recommendations: data.recommendations || [],
+      overall_score: data.overall_score || 0,
     };
   };
 
@@ -105,17 +139,30 @@ export function AssessmentResults({
 
   return (
     <div className="min-h-screen text-[#0f1b40]">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6">
-        <Button 
-          variant="outline" 
-          onClick={onBack} 
-          className="mb-6 border-gray-300 hover:bg-gray-50 hover:border-gray-400 text-gray-700 font-medium px-4 py-2 shadow-sm"
-        >
-          <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Dashboard
-        </Button>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+        <div className="flex items-center justify-between mb-6">
+          <Button
+            variant="outline"
+            onClick={onBack}
+            className="border-gray-300 hover:bg-gray-50 hover:border-gray-400 text-gray-700 font-medium px-4 py-2 shadow-sm"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Назад к дашборду
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={() => setViewMode(viewMode === 'modern' ? 'classic' : 'modern')}
+            className="text-sm text-gray-600 hover:text-gray-900"
+          >
+            {viewMode === 'modern' ? 'Классический вид' : 'Современный вид'}
+          </Button>
+        </div>
       </div>
-      <CareerResultPage results={results} onComplete={onStartSimulation} />
+      {viewMode === 'modern' ? (
+        <CareerResultsModern results={results} onComplete={onStartSimulation} />
+      ) : (
+        <CareerResultPage results={results} onComplete={onStartSimulation} />
+      )}
     </div>
   );
 }

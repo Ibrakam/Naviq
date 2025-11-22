@@ -93,6 +93,7 @@ class AssessmentResult(BaseModel):
     overall_score: float
     recommendations: List[str]
     primary_track: Optional[str] = None
+    skills_radar: Optional[List[Dict[str, Any]]] = None
 
 
 class AssessmentChatQuestion(BaseModel):

@@ -120,6 +120,18 @@ class PrototypeModel:
 
 def train_model():
     global MODEL_SOURCE
+    # Сначала пытаемся загрузить предобученную модель
+    try:
+        from pathlib import Path
+        import pickle
+        model_path = Path(__file__).parent / "app" / "ml" / "career_model.pkl"
+        with open(model_path, 'rb') as f:
+            MODEL_SOURCE = "pretrained"
+            return pickle.load(f)
+    except (FileNotFoundError, Exception):
+        pass
+
+    # Затем пытаемся загрузить из CSV
     try:
         X, y = load_dataset_from_csv()
         MODEL_SOURCE = "csv"

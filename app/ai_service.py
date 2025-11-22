@@ -252,7 +252,8 @@ class AIAssessmentService:
         db: Session,
     ) -> Tuple[AssessmentResult, List[str]]:
         """Score answers with track weights + ML model."""
-        self._ensure_questions_seeded(db)
+        # NOTE: Commented out auto-seeding - questions are managed via seed_assessment_questions.py
+        # self._ensure_questions_seeded(db)
         question_models = (
             db.query(AssessmentQuestionModel)
             .filter(AssessmentQuestionModel.is_active.is_(True))
@@ -353,7 +354,8 @@ class AIAssessmentService:
 
     # Helpers
     def _ordered_questions(self, db: Session) -> List[AssessmentQuestionModel]:
-        self._ensure_questions_seeded(db)
+        # NOTE: Commented out auto-seeding - questions are managed via seed_assessment_questions.py
+        # self._ensure_questions_seeded(db)
         questions = (
             db.query(AssessmentQuestionModel)
             .filter(AssessmentQuestionModel.is_active.is_(True))
@@ -458,6 +460,44 @@ class AIAssessmentService:
 
         return sorted(combined.items(), key=lambda item: item[1], reverse=True)
 
+    def _calculate_skills_from_tracks(
+        self,
+        ordered_scores: List[Tuple[str, float]]
+    ) -> List[Dict[str, Any]]:
+        """Calculate skill scores based on track matches."""
+        # Mapping of skills to tracks that contribute to them
+        skill_track_mapping = {
+            "Аналитика": {"data": 1.0, "tech": 0.6, "business": 0.4},
+            "Коммуникация": {"social": 1.0, "business": 0.7, "design": 0.3},
+            "Креативность": {"design": 1.0, "business": 0.4, "social": 0.3},
+            "Технические навыки": {"tech": 1.0, "data": 0.8, "design": 0.2},
+            "Лидерство": {"business": 1.0, "social": 0.6, "tech": 0.2},
+        }
+
+        skills_radar = []
+        for skill, track_weights in skill_track_mapping.items():
+            skill_score = 0.0
+            total_weight = 0.0
+
+            for track_id, track_score in ordered_scores:
+                if track_id in track_weights:
+                    weight = track_weights[track_id]
+                    skill_score += track_score * weight
+                    total_weight += weight
+
+            if total_weight > 0:
+                normalized_score = min(100, (skill_score / total_weight) * 100)
+            else:
+                normalized_score = 50
+
+            skills_radar.append({
+                "skill": skill,
+                "value": round(normalized_score, 1),
+                "fullMark": 100
+            })
+
+        return skills_radar
+
     def _build_result(
         self,
         ordered_scores: List[Tuple[str, float]],
@@ -494,6 +534,9 @@ class AIAssessmentService:
             len(ordered_scores[:2]), 1
         )
 
+        # Calculate skills radar based on track scores
+        skills_radar = self._calculate_skills_from_tracks(ordered_scores)
+
         return AssessmentResult(
             top_tracks=top_tracks_payload,
             development_plan=plan,
@@ -501,4 +544,5 @@ class AIAssessmentService:
             overall_score=overall_score,
             recommendations=recommendations,
             primary_track=primary_track,
+            skills_radar=skills_radar,
         )

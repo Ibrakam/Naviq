@@ -5,6 +5,7 @@ import { Login } from './components/Login';
 import { Signup } from './components/Signup';
 import { Dashboard } from './components/Dashboard';
 import { Assessment } from './components/Assessment';
+import { AssessmentNew } from './components/AssessmentNew';
 import { AssessmentResults } from './components/AssessmentResults';
 import { SimulationCatalog } from './components/SimulationCatalog';
 import { SimulationPlayer } from './components/SimulationPlayer';
@@ -78,7 +79,7 @@ export default function App() {
     }
   }, [currentPage, accessToken]);
 
-  const handleLogin = async (email: string, password: string) => {
+  const handleLogin = async (email: string, password: string, redirectPage: Page = 'dashboard') => {
     try {
       const response = await fetch(buildApiUrl(apiRoutes.login), {
         method: 'POST',
@@ -98,7 +99,7 @@ export default function App() {
       setUser(data.user);
       localStorage.setItem('naviq_access_token', data.accessToken);
       localStorage.setItem('naviq_user', JSON.stringify(data.user));
-      setCurrentPage('dashboard');
+      setCurrentPage(redirectPage);
     } catch (error: any) {
       alert('Login failed: ' + error.message);
     }
@@ -120,8 +121,8 @@ export default function App() {
         throw new Error(data.error || 'Signup failed');
       }
 
-      // After signup, log in
-      await handleLogin(email, password);
+      // After signup, log in and redirect to assessment (career orientation)
+      await handleLogin(email, password, 'assessment');
     } catch (error: any) {
       alert('Signup failed: ' + error.message);
     }
@@ -235,8 +236,9 @@ export default function App() {
       {currentPage === 'assessment' && (() => {
         const token = accessToken || localStorage.getItem('naviq_access_token');
         if (!token) return null;
+        // Use new assessment component with questions and answers
         return (
-          <Assessment
+          <AssessmentNew
             accessToken={token}
             onComplete={() => navigateTo('assessment-results')}
             onBack={() => navigateTo('dashboard')}
