@@ -3,7 +3,6 @@ import { ArrowLeft, Sparkles } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card } from './ui/card';
 import { apiRoutes, buildApiUrl } from '../utils/api';
-import { CareerResultPage } from './Assessment';
 import { CareerResultsModern } from './CareerResultsModern';
 
 interface AssessmentResultsProps {
@@ -20,8 +19,6 @@ export function AssessmentResults({
   const [results, setResults] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  // Move viewMode hook to top to avoid conditional hook call
-  const [viewMode, setViewMode] = useState<'modern' | 'classic'>('modern');
 
   const normalizeResult = (data: any) => {
     // Map tracks for both modern and classic views
@@ -140,7 +137,7 @@ export function AssessmentResults({
   return (
     <div className="min-h-screen text-[#0f1b40]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center mb-6">
           <Button
             variant="outline"
             onClick={onBack}
@@ -149,20 +146,9 @@ export function AssessmentResults({
             <ArrowLeft className="w-4 h-4 mr-2" />
             Назад к дашборду
           </Button>
-          <Button
-            variant="ghost"
-            onClick={() => setViewMode(viewMode === 'modern' ? 'classic' : 'modern')}
-            className="text-sm text-gray-600 hover:text-gray-900"
-          >
-            {viewMode === 'modern' ? 'Классический вид' : 'Современный вид'}
-          </Button>
         </div>
       </div>
-      {viewMode === 'modern' ? (
-        <CareerResultsModern results={results} onComplete={onStartSimulation} />
-      ) : (
-        <CareerResultPage results={results} onComplete={onStartSimulation} />
-      )}
+      <CareerResultsModern results={results} onComplete={onStartSimulation} />
     </div>
   );
 }
