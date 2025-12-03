@@ -326,3 +326,67 @@ class GamificationProfile(BaseModel):
     recent_achievements: List[UserAchievement]  # Последние 5 достижений
     level_progress: float  # Процент прогресса до следующего уровня (0-100)
     next_level_points: int  # Осталось очков до следующего уровня
+
+
+# Course schemas
+class CourseBase(BaseModel):
+    title: str
+    description: Optional[str] = None
+    track: str  # Frontend, Backend, Data, Design, Marketing
+    duration: Optional[str] = None
+    level: str = "Beginner"
+    lessons_count: int = 0
+    content: List[Dict[str, Any]] = []
+    is_active: bool = True
+    image_url: Optional[str] = None
+    instructor: Optional[str] = None
+    rating: int = 0
+    students_count: int = 0
+
+
+class CourseCreate(CourseBase):
+    pass
+
+
+class CourseUpdate(BaseModel):
+    title: Optional[str] = None
+    description: Optional[str] = None
+    track: Optional[str] = None
+    duration: Optional[str] = None
+    level: Optional[str] = None
+    lessons_count: Optional[int] = None
+    content: Optional[List[Dict[str, Any]]] = None
+    is_active: Optional[bool] = None
+    image_url: Optional[str] = None
+    instructor: Optional[str] = None
+    rating: Optional[int] = None
+    students_count: Optional[int] = None
+
+
+class Course(CourseBase):
+    id: int
+    created_at: datetime
+    updated_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+
+class CourseEnrollmentBase(BaseModel):
+    course_id: int
+
+
+class CourseEnrollmentCreate(CourseEnrollmentBase):
+    pass
+
+
+class CourseEnrollment(CourseEnrollmentBase):
+    id: int
+    user_id: int
+    progress: int
+    completed: bool
+    enrolled_at: datetime
+    completed_at: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True

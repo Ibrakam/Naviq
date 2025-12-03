@@ -1,17 +1,14 @@
 import { useState, useEffect } from 'react';
 import { apiRoutes, buildApiUrl } from './utils/api';
-import { NewLanding } from './components/NewLanding';
-import { Login } from './components/Login';
-import { Signup } from './components/Signup';
-import { Dashboard } from './components/Dashboard';
-import { Assessment } from './components/Assessment';
-import { AssessmentNew } from './components/AssessmentNew';
-import { AssessmentResults } from './components/AssessmentResults';
-import { SimulationCatalog } from './components/SimulationCatalog';
-import { SimulationPlayer } from './components/SimulationPlayer';
-import { Profile } from './components/Profile';
-import { AdminPanel } from './components/AdminPanel';
-import { CompleteProfile } from './components/CompleteProfile';
+import { NewLanding } from './components/landing';
+import { Login, Signup } from './components/auth';
+import { Dashboard } from './components/dashboard';
+import { AssessmentNew, AssessmentResults } from './components/assessment';
+import { SimulationCatalog, SimulationPlayer } from './components/simulation';
+import { CourseCatalog, CourseDetail, LessonPlayer } from './components/course';
+import { Profile, CompleteProfile } from './components/profile';
+import { AdminPanelNew } from './components/admin';
+import { Toaster } from 'sonner';
 
 type Page =
   | 'landing'
@@ -22,12 +19,15 @@ type Page =
   | 'assessment-results'
   | 'catalog'
   | 'simulation'
+  | 'course-catalog'
+  | 'course-detail'
+  | 'lesson-player'
   | 'profile'
   | 'admin'
   | 'complete-profile';
 
 // Protected pages that require authentication
-const protectedPages: Page[] = ['dashboard', 'assessment', 'catalog', 'simulation', 'profile', 'admin', 'complete-profile'];
+const protectedPages: Page[] = ['dashboard', 'assessment', 'catalog', 'simulation', 'course-catalog', 'course-detail', 'lesson-player', 'profile', 'admin', 'complete-profile'];
 const publicPages: Page[] = ['landing', 'login', 'signup'];
 
 export default function App() {
@@ -35,6 +35,10 @@ export default function App() {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [user, setUser] = useState<any>(null);
   const [selectedSimulation, setSelectedSimulation] = useState<string | null>(null);
+  const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
+  const [selectedLesson, setSelectedLesson] = useState<string | null>(null);
+  const [selectedModule, setSelectedModule] = useState<string | null>(null);
+  const [courseData, setCourseData] = useState<{ title: string; modules: any[] } | null>(null);
 
   // Listen for profile updates and sync user state
   useEffect(() => {
@@ -57,11 +61,17 @@ export default function App() {
     const storedToken = localStorage.getItem('naviq_access_token');
     const storedUser = localStorage.getItem('naviq_user');
     if (storedToken && storedUser) {
+      const userData = JSON.parse(storedUser);
       setAccessToken(storedToken);
-      setUser(JSON.parse(storedUser));
+      setUser(userData);
       // Don't override currentPage if it's already set (e.g., from URL)
       if (currentPage === 'landing') {
-        setCurrentPage('dashboard');
+        // Auto-redirect admin to admin panel
+        if (userData.role === 'admin') {
+          setCurrentPage('admin');
+        } else {
+          setCurrentPage('dashboard');
+        }
       }
     }
 
@@ -99,7 +109,13 @@ export default function App() {
       setUser(data.user);
       localStorage.setItem('naviq_access_token', data.accessToken);
       localStorage.setItem('naviq_user', JSON.stringify(data.user));
-      setCurrentPage(redirectPage);
+
+      // Auto-redirect admin to admin panel
+      if (data.user.role === 'admin') {
+        setCurrentPage('admin');
+      } else {
+        setCurrentPage(redirectPage);
+      }
     } catch (error: any) {
       alert('Login failed: ' + error.message);
     }
@@ -167,15 +183,41 @@ export default function App() {
     setCurrentPage('landing');
   };
 
-  const navigateTo = (page: Page, simulationId?: string) => {
+  const navigateTo = (page: Page, simulationId?: string, courseId?: string) => {
     if (simulationId) {
       setSelectedSimulation(simulationId);
+    }
+    if (courseId) {
+      setSelectedCourse(courseId);
+    }
+    if (page === 'course-catalog') {
+      setSelectedCourse(null);
     }
     setCurrentPage(page);
   };
 
+  const handleStartCourseLesson = (lessonId?: string, moduleId?: string, courseTitle?: string, modules?: any[]) => {
+    console.log('handleStartCourseLesson called', { lessonId, moduleId, courseTitle, modulesCount: modules?.length });
+    if (lessonId && moduleId) {
+      setSelectedLesson(lessonId);
+      setSelectedModule(moduleId);
+      if (courseTitle && modules) {
+        console.log('Setting course data:', { title: courseTitle, modulesCount: modules.length });
+        setCourseData({ title: courseTitle, modules });
+      } else {
+        console.warn('Missing courseTitle or modules!');
+      }
+      console.log('Navigating to lesson-player');
+      setCurrentPage('lesson-player');
+    } else {
+      console.log('Missing lesson or module ID');
+    }
+  };
+
   return (
-    <div className="min-h-screen">
+    <>
+      <Toaster position="top-right" richColors />
+      <div className="min-h-screen">
       {currentPage === 'landing' && (
         <NewLanding
           onLogin={() => navigateTo('login')}
@@ -270,6 +312,63 @@ export default function App() {
         );
       })()}
 
+      {currentPage === 'course-catalog' && (() => {
+        const token = accessToken || localStorage.getItem('naviq_access_token');
+        if (!token) return null;
+        return (
+          <CourseCatalog
+            accessToken={token}
+            user={user}
+            onSelectCourse={(id) => navigateTo('course-detail', undefined, id)}
+            onBack={() => navigateTo('dashboard')}
+          />
+        );
+      })()}
+
+      {currentPage === 'course-detail' && (() => {
+        const token = accessToken || localStorage.getItem('naviq_access_token');
+        if (!token) return null;
+        if (!selectedCourse) {
+          navigateTo('course-catalog');
+          return null;
+        }
+        return (
+          <CourseDetail
+            accessToken={token}
+            courseId={selectedCourse}
+            user={user}
+            onStartLesson={handleStartCourseLesson}
+            onBack={() => navigateTo('course-catalog')}
+          />
+        );
+      })()}
+
+      {currentPage === 'lesson-player' && (() => {
+        const token = accessToken || localStorage.getItem('naviq_access_token');
+        if (!token) return null;
+        if (!selectedCourse || !selectedLesson || !selectedModule || !courseData) {
+          navigateTo('course-catalog');
+          return null;
+        }
+        return (
+          <LessonPlayer
+            accessToken={token}
+            courseId={parseInt(selectedCourse)}
+            courseTitle={courseData.title}
+            modules={courseData.modules}
+            initialModuleId={parseInt(selectedModule)}
+            initialLessonId={parseInt(selectedLesson)}
+            onBack={() => navigateTo('course-detail', undefined, selectedCourse)}
+            onCourseComplete={() => {
+              setSelectedLesson(null);
+              setSelectedModule(null);
+              setCourseData(null);
+              navigateTo('course-detail', undefined, selectedCourse);
+            }}
+          />
+        );
+      })()}
+
       {currentPage === 'simulation' && (() => {
         const token = accessToken || localStorage.getItem('naviq_access_token');
         if (!token) return null;
@@ -308,12 +407,13 @@ export default function App() {
         const token = accessToken || localStorage.getItem('naviq_access_token');
         if (!token) return null;
         return (
-          <AdminPanel
+          <AdminPanelNew
             accessToken={token}
             onBack={() => navigateTo('dashboard')}
           />
         );
       })()}
     </div>
+    </>
   );
 }

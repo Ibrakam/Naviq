@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response, HTMLResponse
 from app.config import settings
 from app.database import engine, Base
-from app.routers import auth, assessment, simulations, tracks, certificates, admin, gamification, new_front
+from app.routers import auth, assessment, simulations, tracks, certificates, admin, gamification, new_front, courses, ai_grading
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -77,6 +77,8 @@ app.include_router(assessment.router)
 app.include_router(simulations.router)
 app.include_router(tracks.router)
 app.include_router(certificates.router)
+app.include_router(courses.router)
+app.include_router(ai_grading.router)
 app.include_router(admin.router)
 app.include_router(gamification.router)
 app.include_router(new_front.router)

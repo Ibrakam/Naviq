@@ -77,20 +77,24 @@ class CareerTrack(Base):
 
 class Simulation(Base):
     __tablename__ = "simulations"
-    
+
     id = Column(Integer, primary_key=True, index=True)
     title = Column(String(200), nullable=False)
     description = Column(Text)
     company = Column(String(100))
     track_id = Column(Integer, ForeignKey("career_tracks.id"), nullable=False)
+    course_id = Column(Integer, ForeignKey("courses.id"), nullable=True)  # Optional link to course
     steps = Column(JSON, nullable=False)  # Array of step objects
     duration = Column(String(50))  # e.g., "30-45 minutes"
     level = Column(String(20), default="beginner")  # beginner, intermediate, advanced
+    required_progress = Column(Integer, default=0)  # Required course progress % to unlock (0-100)
+    unlock_message = Column(String(500), nullable=True)  # Message shown when unlocked
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    
+
     # Relationships
     track = relationship("CareerTrack", back_populates="simulations")
+    course = relationship("Course", back_populates="simulations")
     submissions = relationship("Submission", back_populates="simulation")
     certificates = relationship("Certificate", back_populates="simulation")
 
@@ -170,13 +174,74 @@ class Achievement(Base):
 
 class UserAchievement(Base):
     __tablename__ = "user_achievements"
-    
+
     id = Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     achievement_id = Column(Integer, ForeignKey("achievements.id"), nullable=False)
     earned_at = Column(DateTime(timezone=True), server_default=func.now())
     points_earned = Column(Integer, default=0)  # Очки, полученные при получении этого достижения
-    
+
     # Relationships
     user = relationship("User", back_populates="achievements")
     achievement = relationship("Achievement", back_populates="user_achievements")
+
+
+class Course(Base):
+    __tablename__ = "courses"
+
+    id = Column(Integer, primary_key=True, index=True)
+    title = Column(String(200), nullable=False)
+    description = Column(Text)
+    track = Column(String(50), nullable=False)  # Frontend, Backend, Data, Design, Marketing
+    duration = Column(String(50))  # e.g., "4 weeks"
+    level = Column(String(20), default="Beginner")  # Beginner, Intermediate, Advanced
+    lessons_count = Column(Integer, default=0)
+    content = Column(JSON, default=list)  # Массив уроков/модулей
+    is_active = Column(Boolean, default=True)
+    image_url = Column(String(500), nullable=True)  # Course cover image
+    instructor = Column(String(100), nullable=True)  # Course instructor/author
+    rating = Column(Integer, default=0)  # Average rating (0-5)
+    students_count = Column(Integer, default=0)  # Number of enrolled students
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+
+    # Relationships
+    enrollments = relationship("CourseEnrollment", back_populates="course")
+    simulations = relationship("Simulation", back_populates="course")
+
+
+class CourseEnrollment(Base):
+    __tablename__ = "course_enrollments"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    course_id = Column(Integer, ForeignKey("courses.id"), nullable=False)
+    progress = Column(Integer, default=0)  # Прогресс в процентах (0-100)
+    completed = Column(Boolean, default=False)
+    current_lesson_id = Column(Integer, nullable=True)  # Current lesson being studied
+    lessons_completed = Column(JSON, default=dict)  # {lesson_id: completed_at_timestamp}
+    unlocked_simulations = Column(JSON, default=list)  # [simulation_ids]
+    last_accessed = Column(DateTime(timezone=True))  # Last time user accessed this course
+    enrolled_at = Column(DateTime(timezone=True), server_default=func.now())
+    completed_at = Column(DateTime(timezone=True))
+
+    # Relationships
+    user = relationship("User")
+    course = relationship("Course", back_populates="enrollments")
+    lesson_progress = relationship("LessonProgress", back_populates="enrollment")
+
+
+class LessonProgress(Base):
+    __tablename__ = "lesson_progress"
+
+    id = Column(Integer, primary_key=True, index=True)
+    enrollment_id = Column(Integer, ForeignKey("course_enrollments.id"), nullable=False)
+    lesson_id = Column(Integer, nullable=False)  # Lesson ID from course content JSON
+    module_id = Column(Integer, nullable=False)  # Module ID from course content JSON
+    completed = Column(Boolean, default=False)
+    time_spent = Column(Integer, default=0)  # Time spent in seconds
+    completed_at = Column(DateTime(timezone=True))
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    # Relationships
+    enrollment = relationship("CourseEnrollment", back_populates="lesson_progress")

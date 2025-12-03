@@ -64,7 +64,38 @@ def ensure_additional_columns():
         if "messages" not in session_columns:
             # SQLite stores JSON as TEXT; FastAPI/SQLAlchemy handle serialization
             connection.execute(text("ALTER TABLE assessment_sessions ADD COLUMN messages TEXT"))
-        
+
+        # Course enhancements
+        course_columns = _columns("courses")
+        if "image_url" not in course_columns:
+            connection.execute(text("ALTER TABLE courses ADD COLUMN image_url VARCHAR(500)"))
+        if "instructor" not in course_columns:
+            connection.execute(text("ALTER TABLE courses ADD COLUMN instructor VARCHAR(100)"))
+        if "rating" not in course_columns:
+            connection.execute(text("ALTER TABLE courses ADD COLUMN rating INTEGER DEFAULT 0"))
+        if "students_count" not in course_columns:
+            connection.execute(text("ALTER TABLE courses ADD COLUMN students_count INTEGER DEFAULT 0"))
+
+        # Simulation enhancements
+        simulation_columns = _columns("simulations")
+        if "course_id" not in simulation_columns:
+            connection.execute(text("ALTER TABLE simulations ADD COLUMN course_id INTEGER"))
+        if "required_progress" not in simulation_columns:
+            connection.execute(text("ALTER TABLE simulations ADD COLUMN required_progress INTEGER DEFAULT 0"))
+        if "unlock_message" not in simulation_columns:
+            connection.execute(text("ALTER TABLE simulations ADD COLUMN unlock_message VARCHAR(500)"))
+
+        # CourseEnrollment enhancements
+        enrollment_columns = _columns("course_enrollments")
+        if "current_lesson_id" not in enrollment_columns:
+            connection.execute(text("ALTER TABLE course_enrollments ADD COLUMN current_lesson_id INTEGER"))
+        if "lessons_completed" not in enrollment_columns:
+            connection.execute(text("ALTER TABLE course_enrollments ADD COLUMN lessons_completed TEXT"))
+        if "unlocked_simulations" not in enrollment_columns:
+            connection.execute(text("ALTER TABLE course_enrollments ADD COLUMN unlocked_simulations TEXT"))
+        if "last_accessed" not in enrollment_columns:
+            connection.execute(text("ALTER TABLE course_enrollments ADD COLUMN last_accessed DATETIME"))
+
         connection.commit()
 
 

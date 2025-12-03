@@ -1,0 +1,538 @@
+import React, { useState, useEffect } from 'react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Sparkles,
+  CheckCircle2,
+  Target,
+  BookOpen,
+  Calendar,
+  GraduationCap,
+  ListChecks,
+} from 'lucide-react';
+import { Button } from '../ui/button';
+import { Textarea } from '../ui/textarea';
+import { apiRoutes, buildApiUrl } from '../../utils/api';
+
+interface AssessmentProps {
+  accessToken: string;
+  onComplete: () => void;
+  onBack: () => void;
+}
+
+interface AssessmentOption {
+  code: string;
+  text: string;
+}
+
+interface Question {
+  id: number;
+  question: string;
+  type: string;
+  options?: AssessmentOption[];
+  category?: string;
+}
+
+export interface CareerResultProps {
+  results: any;
+  onComplete: () => void;
+}
+
+export function CareerResultPage({ results, onComplete }: CareerResultProps) {
+  const primaryTrack = results.tracks?.[0];
+  const secondaryTrack = results.tracks?.[1];
+  const courses = results.suggestedCourses || [];
+
+  // Convert plan to array format if it's an object
+  const planArray = React.useMemo(() => {
+    // Check both 'plan' and 'development_plan' fields
+    const planData = results.plan || results.development_plan;
+    if (!planData) return [];
+    if (Array.isArray(planData)) return planData;
+    // If it's an object, convert to array
+    if (typeof planData === 'object') {
+      return Object.entries(planData).map(([day, task]) => ({
+        day,
+        task: String(task),
+      }));
+    }
+    return [];
+  }, [results.plan, results.development_plan]);
+
+  const recommendedSteps = [
+    `Add a course in the "${primaryTrack?.name || 'selected track'}" direction`,
+    'Complete the "Client Call" simulation',
+    'Complete your profile to 100%',
+    'Prepare questions for your mentor',
+  ];
+
+  return (
+    <div className="min-h-screen text-[#0f1b40] py-6 md:py-8">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 space-y-10 md:space-y-14">
+        {/* Header */}
+        <section className="rounded-xl border-2 border-[#dfe3ff] bg-white/90 backdrop-blur p-6 md:p-8 shadow-[0_20px_60px_rgba(73,92,175,0.12)] mb-8">
+          <div className="flex items-center gap-2 mb-4">
+            <div className="w-8 h-8 bg-[#edeaff] rounded-lg flex items-center justify-center">
+              <CheckCircle2 className="w-5 h-5 text-[#5b4dff]" />
+            </div>
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#f3f5ff] px-3 py-1 text-xs font-semibold text-[#4b3fe0]">
+              Results Ready
+            </span>
+          </div>
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-white mb-3">Your Career Results</h1>
+            <p className="text-white/70 text-sm md:text-base leading-relaxed">
+              {primaryTrack?.reason || 'You often choose scenarios about people and communication. We have selected tracks that will help you solidify this in your career.'}
+            </p>
+          </div>
+        </section>
+
+        {/* Top cards */}
+        <section className="grid gap-6 md:grid-cols-3 mb-10">
+          <div className="rounded-xl border-2 border-[#dfe3ff] bg-white/90 backdrop-blur p-6 shadow-[0_12px_40px_rgba(73,92,175,0.12)] hover:shadow-[0_16px_50px_rgba(73,92,175,0.16)] transition-all">
+            <p className="text-xs uppercase tracking-wider text-white/60 mb-2 font-medium">Primary Track</p>
+            <h3 className="text-xl font-bold text-white mb-1">{primaryTrack?.name || '—'}</h3>
+            <p className="text-sm text-white/70">best match</p>
+            {primaryTrack?.match_percentage && (
+              <div className="mt-4 pt-4 border-t border-white/10">
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-gradient-to-r from-[#6555ff] to-[#4fb5ff] h-2 rounded-full transition-all"
+                      style={{ width: `${primaryTrack.match_percentage}%` }}
+                    ></div>
+                  </div>
+                  <span className="text-sm font-semibold text-[#5b4dff]">{primaryTrack.match_percentage}%</span>
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="rounded-xl border-2 border-[#dfe3ff] bg-white/90 backdrop-blur p-6 shadow-[0_12px_40px_rgba(73,92,175,0.12)] hover:shadow-[0_16px_50px_rgba(73,92,175,0.16)] transition-all">
+            <p className="text-xs uppercase tracking-wider text-white/60 mb-2 font-medium">Alternative</p>
+            <h3 className="text-xl font-bold text-white mb-1">{secondaryTrack?.name || 'To be determined'}</h3>
+            <p className="text-sm text-white/70">second strongest track</p>
+            {secondaryTrack?.match_percentage && (
+              <div className="mt-4 pt-4 border-t border-white/10">
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 bg-gray-200 rounded-full h-2">
+                    <div 
+                      className="bg-[#7b61ff] h-2 rounded-full transition-all"
+                      style={{ width: `${secondaryTrack.match_percentage}%` }}
+                    ></div>
+                  </div>
+                  <span className="text-sm font-semibold text-[#5b4dff]">{secondaryTrack.match_percentage}%</span>
+                </div>
+              </div>
+            )}
+          </div>
+          <div className="rounded-xl border-2 border-[#dfe3ff] bg-gradient-to-br from-[#f4f5ff] via-white to-[#ecf7ff] p-6 shadow-[0_12px_40px_rgba(73,92,175,0.12)] hover:shadow-[0_16px_50px_rgba(73,92,175,0.16)] transition-all flex flex-col justify-between">
+            <div>
+              <p className="text-xs uppercase tracking-wider text-white/60 mb-2 font-medium">Next Step</p>
+              <h3 className="text-xl font-bold text-white mb-1">Complete Your First Simulation</h3>
+              <p className="text-sm text-white/70">reinforce results with practice</p>
+            </div>
+            <Button
+              onClick={onComplete}
+              className="mt-6 w-full"
+            >
+              Go to Simulations
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </div>
+        </section>
+
+        {/* Career tracks */}
+        <section className="mb-12">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-[#edeaff] rounded-lg flex items-center justify-center">
+              <Target className="w-5 h-5 text-[#5b4dff]" />
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold text-white">Your Career Directions</h2>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2">
+            {primaryTrack && (
+              <div className="rounded-lg border-2 border-[#dfe3ff] bg-white/90 backdrop-blur p-6 md:p-8 hover:shadow-[0_12px_40px_rgba(73,92,175,0.12)] transition-all">
+                <span className="inline-flex items-center rounded-full bg-[#f3f5ff] px-3 py-1.5 text-xs font-semibold text-[#4b3fe0] mb-4">
+                  Best Match
+                </span>
+                <h3 className="text-xl md:text-2xl font-bold text-white mb-3">{primaryTrack.name}</h3>
+                <p className="text-sm md:text-base text-white/70 leading-relaxed mb-5">
+                  {primaryTrack.reason || 'You choose options about speed, stability, and clear results.'}
+                </p>
+                {primaryTrack.skills && primaryTrack.skills.length > 0 && (
+                  <div className="mt-5 pt-5 border-t border-white/10">
+                    <p className="text-xs font-semibold text-white/60 mb-2 uppercase tracking-wider">Skills</p>
+                    <div className="flex flex-wrap gap-2">
+                      {primaryTrack.skills.slice(0, 3).map((skill: string, idx: number) => (
+                        <span key={idx} className="px-3 py-1.5 bg-white/10 text-gray-700 rounded-md text-xs font-medium">
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+            {secondaryTrack && (
+              <div className="rounded-lg border-2 border-[#dfe3ff] bg-white/90 backdrop-blur p-6 md:p-8 hover:shadow-[0_12px_40px_rgba(73,92,175,0.12)] transition-all">
+                <span className="inline-flex items-center rounded-full bg-[#f3f5ff] px-3 py-1.5 text-xs font-semibold text-[#4b3fe0] mb-4">
+                  Also Suitable for You
+                </span>
+                <h3 className="text-xl md:text-2xl font-bold text-white mb-3">{secondaryTrack.name}</h3>
+                <p className="text-sm md:text-base text-white/70 leading-relaxed mb-5">
+                  {secondaryTrack.reason || 'You think in terms of market, deadlines, and impact on people.'}
+                </p>
+                {secondaryTrack.skills && secondaryTrack.skills.length > 0 && (
+                  <div className="mt-5 pt-5 border-t border-white/10">
+                    <p className="text-xs font-semibold text-white/60 mb-2 uppercase tracking-wider">Skills</p>
+                    <div className="flex flex-wrap gap-2">
+                      {secondaryTrack.skills.slice(0, 3).map((skill: string, idx: number) => (
+                        <span key={idx} className="px-3 py-1.5 bg-white/10 text-gray-700 rounded-md text-xs font-medium">
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* Courses (optional) */}
+        {courses.length > 0 && (
+          <section className="mb-12">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-[#edeaff] rounded-lg flex items-center justify-center">
+                <GraduationCap className="w-5 h-5 text-[#5b4dff]" />
+              </div>
+              <h2 className="text-2xl md:text-3xl font-bold text-white">Recommended Courses</h2>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2">
+              {courses.map((course: any, idx: number) => (
+                <div key={course.title || idx} className="rounded-2xl bg-white/90 backdrop-blur p-6 border border-[#dfe3ff] hover:shadow-[0_12px_40px_rgba(73,92,175,0.12)] transition-all">
+                  <p className="text-base font-semibold text-white mb-3">{course.title || course.name}</p>
+                  <p className="text-sm text-white/70">{course.platform}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Recommended steps */}
+        <section className="mb-12">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-[#edeaff] rounded-lg flex items-center justify-center">
+              <ListChecks className="w-5 h-5 text-[#5b4dff]" />
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold text-white">Recommended Steps</h2>
+          </div>
+          <div className="bg-white/90 backdrop-blur rounded-2xl border border-[#dfe3ff] p-6 md:p-8">
+            <div className="grid gap-4 md:grid-cols-2">
+              {recommendedSteps.map((step, idx) => (
+                <div key={idx} className="rounded-2xl border border-[#e0e4f5] bg-[#f6f8ff] px-6 py-5 text-sm md:text-base text-[#0f1b40] hover:border-[#7B61FF]/50 transition-all flex items-start gap-4 shadow-[0_10px_30px_rgba(101,85,255,0.08)]">
+                  <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5 bg-white/80 border border-[#e0e4f5]">
+                    <span className="text-sm font-bold text-[#6555ff]">{idx + 1}</span>
+                  </div>
+                  <p className="flex-1 leading-relaxed pt-1">{step}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 7-day plan */}
+        
+      </div>
+    </div>
+  );
+}
+
+type ChatMessage = {
+  role: 'assistant' | 'user' | 'system';
+  content: string;
+  question_id?: number;
+  type?: 'text' | 'choice';
+  options?: AssessmentOption[];
+  category?: string;
+};
+
+type ChatQuestion = {
+  id: number;
+  role: 'assistant' | 'system';
+  question_text: string;
+  type: 'text' | 'choice';
+  options?: AssessmentOption[];
+  category?: string;
+  order?: number;
+};
+
+type ChatProgress = {
+  current: number;
+  total: number;
+};
+
+interface ChatSessionResponse {
+  session_id: number;
+  status: 'draft' | 'completed';
+  messages: ChatMessage[];
+  progress: ChatProgress;
+  result?: any;
+  next_question?: ChatQuestion | null;
+}
+
+const normalizeResultPayload = (data: any) => ({
+  explanation: data.top_tracks?.[0]?.reason || 'Analysis completed',
+  primaryTrack: data.primary_track || data.top_tracks?.[0]?.track_id,
+  tracks:
+    data.top_tracks?.map((track: any, index: number) => ({
+      id: track.track_id || track.name.toLowerCase().replace(/\s+/g, '_'),
+      name: track.name,
+      match: track.match_percentage,
+      description: track.description,
+      reason: track.reason,
+      badge: index === 0 ? 'primary' : 'secondary',
+    })) || [],
+  suggestedCourses:
+    data.courses?.map((course: any) => ({
+      title: course.name,
+      platform: course.platform,
+    })) || [],
+  plan:
+    Object.entries(data.development_plan || {}).map(([day, task]) => ({
+      day,
+      task,
+    })) || [],
+});
+
+export function Assessment({ accessToken, onComplete, onBack }: AssessmentProps) {
+  const [sessionId, setSessionId] = useState<number | null>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [currentQuestion, setCurrentQuestion] = useState<ChatQuestion | null>(null);
+  const [progress, setProgress] = useState<ChatProgress>({ current: 0, total: 0 });
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSending, setIsSending] = useState(false);
+  const [assistantThinking, setAssistantThinking] = useState(false);
+  const [textAnswer, setTextAnswer] = useState('');
+  const [results, setResults] = useState<any>(null);
+  const chatEndRef = React.useRef<HTMLDivElement | null>(null);
+
+  const scrollToBottom = React.useCallback(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, []);
+
+  useEffect(() => {
+    loadOrCreateSession();
+  }, []);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, assistantThinking, scrollToBottom]);
+
+  const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+  const randomAssistantDelay = () => 400 + Math.floor(Math.random() * 300);
+
+  const loadOrCreateSession = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(buildApiUrl(apiRoutes.assessmentSessionCurrent), {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to load assessment session');
+      }
+
+      const data: ChatSessionResponse = await response.json();
+      setSessionId(data.session_id);
+      setMessages(data.messages || []);
+      setProgress(data.progress || { current: 0, total: data.next_question ? data.next_question.order || 0 : 0 });
+
+      if (data.status === 'completed' && data.result) {
+        setResults(normalizeResultPayload(data.result));
+        setCurrentQuestion(null);
+      } else {
+        setResults(null);
+        setCurrentQuestion(data.next_question || null);
+      }
+    } catch (error) {
+      console.error('Failed to load session:', error);
+      alert('Unable to load the assessment. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const sendAnswer = async (answer: string) => {
+    if (!currentQuestion) return;
+
+    const optimisticMessage: ChatMessage = {
+      role: 'user',
+      question_id: currentQuestion.id,
+      content: answer,
+      type: currentQuestion.type,
+    };
+
+    setMessages((prev) => [...prev, optimisticMessage]);
+    setIsSending(true);
+    setAssistantThinking(true);
+    setTextAnswer('');
+
+    try {
+      const response = await fetch(buildApiUrl(apiRoutes.assessmentChatAnswer), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({
+          session_id: sessionId,
+          question_id: currentQuestion.id,
+          user_answer: answer,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save answer');
+      }
+
+      const data: ChatSessionResponse = await response.json();
+      await delay(randomAssistantDelay());
+
+      setSessionId(data.session_id);
+      setMessages(data.messages || []);
+      setProgress((prev) => data.progress || prev);
+      setCurrentQuestion(data.next_question || null);
+
+      if (data.result) {
+        setResults(normalizeResultPayload(data.result));
+      }
+    } catch (error) {
+      console.error('Failed to submit chat answer:', error);
+      setMessages((prev) => prev.slice(0, -1));
+      alert('Failed to send your answer. Please try again.');
+    } finally {
+      setIsSending(false);
+      setAssistantThinking(false);
+    }
+  };
+
+  const handleTextSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!textAnswer.trim() || isSending || assistantThinking) return;
+    sendAnswer(textAnswer.trim());
+  };
+
+  const answeredCount = progress.current || 0;
+  const totalQuestions = progress.total || (currentQuestion ? answeredCount + 1 : answeredCount);
+  const displayQuestionNumber = currentQuestion ? Math.min(answeredCount + 1, totalQuestions) : answeredCount;
+  const completionPercent =
+    totalQuestions > 0 ? Math.min((answeredCount / totalQuestions) * 100, 100) : 0;
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-20 h-20 bg-[#edeaff] rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
+            <Sparkles className="w-10 h-10 text-[#5b4dff]" />
+          </div>
+          <h2 className="text-2xl mb-2">Preparing your chat assistant...</h2>
+          <p className="text-white/70">Almost ready</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (results) {
+    return <CareerResultPage results={results} onComplete={onComplete} />;
+  }
+
+  return (
+    <div className="min-h-screen text-[#0f1b40] py-8 md:py-12">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+        <div className="flex items-center justify-between">
+          <Button variant="ghost" onClick={onBack}>
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back
+          </Button>
+          <div className="w-full max-w-sm ml-6">
+            <div className="flex items-center justify-between text-sm text-white/70 mb-2">
+              <span>Question {Math.max(displayQuestionNumber, 1)} of {Math.max(totalQuestions, 1)}</span>
+              <span>{Math.round(completionPercent)}%</span>
+            </div>
+            <div className="w-full bg-gray-200 rounded-full h-2">
+              <div
+                className="bg-gradient-to-r from-[#6555ff] to-[#4fb5ff] h-2 rounded-full transition-all"
+                style={{ width: `${completionPercent}%` }}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white/80 backdrop-blur-xl border border-white/20 rounded-3xl shadow-sm p-4 sm:p-6 h-[70vh] flex flex-col">
+          <div className="flex-1 overflow-y-auto space-y-4 pr-2">
+            {messages.map((message, index) => {
+              const isUser = message.role === 'user';
+              return (
+                <div key={`${message.question_id}-${index}-${message.role}`} className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
+                  <div
+                    className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm shadow transition-all ${
+                      isUser
+                        ? 'bg-gradient-to-r from-[#6555ff] to-[#4fb5ff] text-white rounded-br-sm'
+                        : 'bg-white/90 backdrop-blur border border-[#dfe3ff] text-white rounded-bl-sm'
+                    }`}
+                  >
+                    <p className="whitespace-pre-line leading-relaxed">{message.content}</p>
+                  </div>
+                </div>
+              );
+            })}
+            {assistantThinking && (
+              <div className="flex justify-start">
+                <div className="bg-white/80 backdrop-blur-xl border border-white/20 rounded-2xl px-4 py-3 text-sm text-white/60 shadow">
+                  <span className="inline-flex items-center gap-1">
+                    Assistant is thinking
+                    <span className="flex gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#7b61ff] animate-bounce" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#7b61ff] animate-bounce delay-100" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#7b61ff] animate-bounce delay-200" />
+                    </span>
+                  </span>
+                </div>
+              </div>
+            )}
+            <div ref={chatEndRef} />
+          </div>
+
+          <div className="border-t border-white/10 pt-4 mt-4">
+            {currentQuestion ? (
+              <form onSubmit={handleTextSubmit} className="flex flex-col sm:flex-row gap-3">
+                <Textarea
+                  value={textAnswer}
+                  onChange={(event) => setTextAnswer(event.target.value)}
+                  placeholder="Type your answer..."
+                  disabled={isSending || assistantThinking}
+                  className="flex-1 resize-none"
+                  rows={3}
+                />
+                <Button
+                  type="submit"
+                  className="self-end sm:self-stretch sm:w-40"
+                  disabled={isSending || assistantThinking || !textAnswer.trim()}
+                >
+                    Send
+                </Button>
+              </form>
+            ) : (
+              <p className="text-sm text-white/60 text-center">Fetching the next question...</p>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

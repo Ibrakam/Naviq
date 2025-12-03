@@ -1,0 +1,203 @@
+import { useEffect, useState } from 'react';
+import { Search, Mail, Calendar, Shield, User as UserIcon, Ban, CheckCircle } from 'lucide-react';
+import { Card } from '../ui/card';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
+
+interface AdminUsersProps {
+  accessToken: string;
+}
+
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  is_active: boolean;
+  created_at: string;
+  education_status?: string;
+  school_name?: string;
+}
+
+export function AdminUsers({ accessToken }: AdminUsersProps) {
+  const [users, setUsers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    loadUsers();
+  }, []);
+
+  const loadUsers = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/api/admin/users', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setUsers(data);
+      }
+    } catch (error) {
+      console.error('Failed to load users:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredUsers = users.filter(
+    (user) =>
+      user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <UserIcon className="w-12 h-12 text-purple-500 animate-pulse mx-auto mb-4" />
+          <p className="text-gray-400">Loading users...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-white">User Management</h2>
+          <p className="text-gray-400 mt-1">Manage all platform users</p>
+        </div>
+        <div className="text-right">
+          <p className="text-3xl font-bold text-white">{users.length}</p>
+          <p className="text-gray-400 text-sm">Total Users</p>
+        </div>
+      </div>
+
+      {/* Search */}
+      <Card className="bg-[#0f1529] border-gray-800 p-4">
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+          <Input
+            type="text"
+            placeholder="Search users by name or email..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 bg-[#0a0f1e] border-gray-700 text-white placeholder-gray-500"
+          />
+        </div>
+      </Card>
+
+      {/* Users List */}
+      <div className="space-y-4">
+        {filteredUsers.length > 0 ? (
+          filteredUsers.map((user) => (
+            <Card
+              key={user.id}
+              className="bg-[#0f1529] border-gray-800 p-6 hover:border-purple-600 transition-all"
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex items-start gap-4 flex-1">
+                  {/* Avatar */}
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center flex-shrink-0">
+                    <span className="text-white font-bold text-lg">
+                      {user.name.charAt(0).toUpperCase()}
+                    </span>
+                  </div>
+
+                  {/* User Info */}
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                      <h3 className="text-lg font-bold text-white">{user.name}</h3>
+                      {user.role === 'admin' && (
+                        <span className="px-2 py-1 text-xs font-medium bg-purple-600 text-white rounded-full flex items-center gap-1">
+                          <Shield className="w-3 h-3" />
+                          Admin
+                        </span>
+                      )}
+                      {user.is_active ? (
+                        <span className="px-2 py-1 text-xs font-medium bg-green-600 text-white rounded-full flex items-center gap-1">
+                          <CheckCircle className="w-3 h-3" />
+                          Active
+                        </span>
+                      ) : (
+                        <span className="px-2 py-1 text-xs font-medium bg-red-600 text-white rounded-full flex items-center gap-1">
+                          <Ban className="w-3 h-3" />
+                          Inactive
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 text-gray-400 text-sm">
+                        <Mail className="w-4 h-4" />
+                        <span>{user.email}</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-gray-400 text-sm">
+                        <Calendar className="w-4 h-4" />
+                        <span>Joined {formatDate(user.created_at)}</span>
+                      </div>
+                      {user.education_status && (
+                        <div className="text-gray-400 text-sm">
+                          <span className="capitalize">{user.education_status}</span>
+                          {user.school_name && <span> at {user.school_name}</span>}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="border-gray-700 text-gray-400 hover:text-white hover:border-purple-600"
+                  >
+                    View Details
+                  </Button>
+                  {user.role !== 'admin' && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className={`border-gray-700 ${
+                        user.is_active
+                          ? 'text-red-400 hover:text-red-300 hover:border-red-600'
+                          : 'text-green-400 hover:text-green-300 hover:border-green-600'
+                      }`}
+                    >
+                      {user.is_active ? 'Deactivate' : 'Activate'}
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </Card>
+          ))
+        ) : (
+          <Card className="bg-[#0f1529] border-gray-800 p-12">
+            <div className="text-center">
+              <UserIcon className="w-16 h-16 text-white/70 mx-auto mb-4" />
+              <p className="text-gray-400 text-lg">No users found</p>
+              <p className="text-white/60 text-sm mt-2">
+                {searchQuery ? 'Try adjusting your search' : 'Users will appear here'}
+              </p>
+            </div>
+          </Card>
+        )}
+      </div>
+    </div>
+  );
+}
