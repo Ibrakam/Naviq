@@ -1,0 +1,12 @@
+.git
+.gitignore
+.DS_Store
+node_modules
+dist
+backend
+frontend
+deploy
+.cursor
+.env
+.env.*
+*.log

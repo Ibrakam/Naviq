@@ -1,0 +1,91 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: naviq_postgres
+    environment:
+      POSTGRES_USER: naviq
+      POSTGRES_PASSWORD: naviq_secret
+      POSTGRES_DB: naviq
+    ports:
+      - "5432:5432"
+    volumes:
+      - naviq_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U naviq"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: naviq_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - naviq_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  celery_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    container_name: naviq_celery_worker
+    command: >
+      watchfiles
+      'celery -A app.tasks.celery_app worker --loglevel=info'
+      --filter python
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://naviq:naviq_secret@postgres:5432/naviq
+      - DATABASE_URL_SYNC=postgresql://naviq:naviq_secret@postgres:5432/naviq
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - CELERY_RESULT_BACKEND=redis://redis:6379/2
+      - REDIS_URL=redis://redis:6379/0
+    volumes:
+      - ./app:/code/app
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  celery_beat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    container_name: naviq_celery_beat
+    command: celery -A app.tasks.celery_app beat --loglevel=info
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://naviq:naviq_secret@postgres:5432/naviq
+      - DATABASE_URL_SYNC=postgresql://naviq:naviq_secret@postgres:5432/naviq
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - CELERY_RESULT_BACKEND=redis://redis:6379/2
+      - REDIS_URL=redis://redis:6379/0
+    volumes:
+      - ./app:/code/app
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  flower:
+    image: mher/flower:2.0
+    container_name: naviq_flower
+    command: celery --broker=redis://redis:6379/1 flower --port=5555
+    ports:
+      - "5555:5555"
+    depends_on:
+      redis:
+        condition: service_healthy
+      celery_worker:
+        condition: service_started
+
+volumes:
+  naviq_postgres_data:
+  naviq_redis_data:

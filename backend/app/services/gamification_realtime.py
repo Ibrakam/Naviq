@@ -1,0 +1,40 @@
+import uuid
+from collections import defaultdict
+
+from fastapi import WebSocket
+
+
+class GamificationConnectionManager:
+    def __init__(self) -> None:
+        self._connections: dict[str, set[WebSocket]] = defaultdict(set)
+
+    async def connect(self, user_id: uuid.UUID, websocket: WebSocket) -> None:
+        await websocket.accept()
+        self._connections[str(user_id)].add(websocket)
+
+    def disconnect(self, user_id: uuid.UUID, websocket: WebSocket) -> None:
+        key = str(user_id)
+        sockets = self._connections.get(key)
+        if not sockets:
+            return
+        sockets.discard(websocket)
+        if not sockets:
+            self._connections.pop(key, None)
+
+    async def send_to_user(self, user_id: uuid.UUID, message: dict) -> None:
+        key = str(user_id)
+        sockets = list(self._connections.get(key, set()))
+        if not sockets:
+            return
+        stale: list[WebSocket] = []
+        for socket in sockets:
+            try:
+                await socket.send_json(message)
+            except Exception:
+                stale.append(socket)
+        if stale:
+            for socket in stale:
+                self.disconnect(user_id, socket)
+
+
+gamification_ws_manager = GamificationConnectionManager()

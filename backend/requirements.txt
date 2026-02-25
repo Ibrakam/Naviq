@@ -1,0 +1,23 @@
+# Runtime dependencies for Naviq backend.
+# Kept in sync with backend/pyproject.toml [project.dependencies]
+
+fastapi>=0.115
+uvicorn[standard]>=0.34
+sqlalchemy[asyncio]>=2.0
+asyncpg>=0.30
+psycopg2-binary>=2.9
+alembic>=1.14
+pydantic-settings>=2.7
+python-jose[cryptography]>=3.3
+passlib[bcrypt]>=1.7
+bcrypt==4.0.1
+redis>=5.2
+httpx>=0.28
+youtube-transcript-api>=0.6.2
+openai>=1.60
+celery[redis]>=5.4
+flower>=2.0
+python-multipart>=0.0.18
+structlog>=24.4
+slowapi>=0.1
+sentry-sdk[fastapi]>=2.19

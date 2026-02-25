@@ -1,99 +1,50 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-
-# Virtual environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# IDE
+# OS / editor
+.DS_Store
 .vscode/
 .idea/
 *.swp
 *.swo
-*~
 
-# OS
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Database
-*.db
-!naviq.db
-*.sqlite3
-*.sqlite
-
-# Environment variables
+# Env / secrets
 .env
 .env.*
 !.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# Node
+node_modules/
+**/node_modules/
+.next/
+**/.next/
+.next-app/
+out/
+build/
+dist/
+coverage/
+.npm/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+**/.venv/
+**/venv/
 
 # Logs
 *.log
 logs/
 
-# Node.js (Frontend)
-node_modules/
-**/node_modules/
-.next/
-out/
-build/
-dist/
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# Runtime temp data
+deploy/dumps/
+backend/uploads/
 
-# Docker
-.dockerignore
-
-# Temporary files
-*.tmp
-*.temp
-
-# CSV and data files (optional - uncomment if sensitive)
-# *.csv
-
-# Build artifacts
-*.pyc
-*.pyo
-*.pyd
-.Python
-
-# Career Navigation Platform specific
-"Career Navigation Platform/build/"
-"Career Navigation Platform/dist/"
-"Career Navigation Platform/.env"
-
-frontend-old-version/
+# Local tools
+.cursor/
