@@ -174,7 +174,7 @@ export default function RoadmapPage() {
           title,
           description,
           progress,
-          state: index === 0 ? "completed" : index === 1 ? "current" : "locked",
+          state: (index === 0 ? "completed" : index === 1 ? "current" : "locked") as MilestoneState,
           icon: getMilestoneIcon(index),
           accent: getMilestoneAccent(index),
           positionClass: milestonePositions[index]?.positionClass ?? milestonePositions[0].positionClass,
