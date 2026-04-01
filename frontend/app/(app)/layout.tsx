@@ -5,11 +5,11 @@ import { TopBar } from "@/components/layout/TopBar";
 
 export default function AppLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-screen">
+    <div className="obsidian-shell flex min-h-screen">
       <Sidebar />
       <div className="flex min-w-0 flex-1 flex-col">
         <TopBar />
-        <main className="flex-1 px-4 py-4 md:px-6">{children}</main>
+        <main className="flex-1 px-5 py-5 md:px-8 md:py-6">{children}</main>
         <GhostMentor />
       </div>
     </div>

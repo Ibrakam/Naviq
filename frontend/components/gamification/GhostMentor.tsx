@@ -19,22 +19,23 @@ export function GhostMentor() {
         onClick={() => setOpen((v) => !v)}
         animate={{ y: [0, -6, 0] }}
         transition={{ repeat: Infinity, duration: 2.8, ease: "easeInOut" }}
-        className="relative rounded-full border border-cyan-300/40 bg-[#050b14]/85 p-3 shadow-[0_0_30px_rgba(0,242,255,0.25)]"
+        className="obsidian-gradient-card relative flex h-16 w-16 items-center justify-center rounded-[1.35rem] text-[#05215a] shadow-[0_24px_60px_rgba(24,94,205,0.3)]"
       >
-        <span className="absolute inset-0 rounded-full bg-[radial-gradient(circle,rgba(0,242,255,0.4),transparent_65%)] opacity-60" />
-        <Bot className="relative h-5 w-5 text-cyan-200" />
+        <span className="absolute inset-0 rounded-[1.35rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.08),transparent)]" />
+        <Bot className="relative h-6 w-6" />
       </motion.button>
 
       {open ? (
-        <div className="mt-2 w-72 rounded-2xl border border-white/15 bg-[#070b16]/95 p-3 backdrop-blur-xl">
-          <p className="mb-2 flex items-center gap-2 text-sm font-medium text-zinc-100">
-            <Sparkles className="h-4 w-4 text-cyan-300" />
+        <div className="obsidian-glass obsidian-ghost-border mt-3 w-80 rounded-[1.5rem] p-4">
+          <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-[#eef1ff]">
+            <Sparkles className="h-4 w-4 text-[#85adff]" />
             {t("gamification.ghostMentor")}
           </p>
-          <div className="space-y-2 text-xs text-zinc-300">
+          <div className="space-y-2 text-xs leading-5 text-[#aeb7de]">
             <p>{t("gamification.todayQuest")}: {dailyQuest?.title ?? "-"}</p>
             <p>
-              {t("gamification.nextLevelXp")}: {profile?.next_level_xp ? Math.max(0, profile.next_level_xp - profile.xp) : t("gamification.max")}
+              {t("gamification.nextLevelXp")}:{" "}
+              {profile?.next_level_xp ? Math.max(0, profile.next_level_xp - profile.xp) : t("gamification.max")}
             </p>
             <p>{t("gamification.currentRank")}: {profile?.rank_title ?? "-"}</p>
           </div>

@@ -1,10 +1,8 @@
 "use client";
 
-import { useMemo } from "react";
-import { Bell, Languages, LogOut } from "lucide-react";
+import { Bell, Languages, Search, Settings2 } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
-import { XPProgressBar } from "@/components/dashboard/XPProgressBar";
 import { useAuthStore } from "@/stores/authStore";
 import { useGamificationStore } from "@/stores/gamificationStore";
 import { useT } from "@/hooks/useT";
@@ -12,57 +10,62 @@ import { useT } from "@/hooks/useT";
 export function TopBar() {
   const router = useRouter();
   const user = useAuthStore((s) => s.user);
-  const logout = useAuthStore((s) => s.logout);
-  const { locale, setLocale, t } = useT();
-  const profile = useGamificationStore((s) => s.profile);
-  const levels = useGamificationStore((s) => s.levels);
+  const { locale, setLocale } = useT();
+  const notifications = useGamificationStore((s) => s.notifications);
 
-  const levelProgress = useMemo(() => {
-    if (!profile || !levels.length) return 0;
-    const current = levels.find((item) => item.level === profile.level);
-    if (!current) return 0;
-    const next = levels.find((item) => item.level === profile.level + 1);
-    if (!next) return 100;
-    const diff = Math.max(1, next.xp_min - current.xp_min);
-    const value = ((profile.xp - current.xp_min) / diff) * 100;
-    return Math.max(0, Math.min(100, value));
-  }, [levels, profile]);
+  const initials = (user?.full_name ?? "Naviq User")
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
 
   return (
-    <header className="sticky top-0 z-20 border-b border-white/10 bg-[#050505]/80 px-4 py-3 backdrop-blur-xl md:px-6">
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <div>
-          <p className="text-sm text-zinc-400">{t("topbar.welcomeBack")}</p>
-          <h1 className="font-space text-lg font-semibold text-zinc-100">{user?.full_name ?? t("topbar.explorer")}</h1>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" onClick={() => setLocale(locale === "ru" ? "uz" : "ru")}>
-            <Languages className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="icon">
-            <Bell className="h-4 w-4" />
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              logout();
-              router.push("/login");
-            }}
-          >
-            <LogOut className="h-4 w-4" />
-            {t("topbar.logout")}
-          </Button>
-        </div>
+    <header className="sticky top-0 z-20 flex h-20 items-center gap-4 px-5 py-4 backdrop-blur-xl md:px-8">
+      <div className="obsidian-input flex h-12 flex-1 items-center gap-3 rounded-2xl px-4 text-[#a0a9d5] shadow-[inset_0_1px_0_rgba(255,255,255,0.03)]">
+        <Search className="h-5 w-5 text-[#6f7dad]" />
+        <input
+          type="text"
+          placeholder="Search insights, careers, or skills..."
+          className="w-full bg-transparent text-[1.05rem] text-[#dbe3ff] outline-none placeholder:text-[#7381b3]"
+        />
       </div>
 
-      <XPProgressBar
-        xp={profile?.xp ?? user?.xp ?? 0}
-        level={profile?.level}
-        rankTitle={profile?.rank_title}
-        progress={profile && levels.length ? levelProgress : undefined}
-      />
+      <div className="flex items-center gap-2 md:gap-3">
+        <button
+          type="button"
+          onClick={() => setLocale(locale === "ru" ? "uz" : "ru")}
+          className="flex h-11 w-11 items-center justify-center rounded-2xl text-[#a0a9d5] transition-colors hover:bg-[#112153] hover:text-[#e1e4ff]"
+          aria-label="Change language"
+        >
+          <Languages className="h-5 w-5" />
+        </button>
+
+        <button
+          type="button"
+          className="relative flex h-11 w-11 items-center justify-center rounded-2xl text-[#a0a9d5] transition-colors hover:bg-[#112153] hover:text-[#e1e4ff]"
+          aria-label="Notifications"
+        >
+          <Bell className="h-5 w-5" />
+          {notifications.length ? <span className="absolute right-3 top-3 h-2.5 w-2.5 rounded-full bg-[#ff8b84]" /> : null}
+        </button>
+
+        <button
+          type="button"
+          onClick={() => router.push("/profile")}
+          className="flex h-11 w-11 items-center justify-center rounded-2xl text-[#a0a9d5] transition-colors hover:bg-[#112153] hover:text-[#e1e4ff]"
+          aria-label="Open profile settings"
+        >
+          <Settings2 className="h-5 w-5" />
+        </button>
+
+        <Link
+          href="/profile"
+          className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,rgba(133,173,255,0.25),rgba(108,159,255,0.38))] text-sm font-bold text-[#f7f9ff] shadow-[0_10px_30px_rgba(6,14,42,0.25)]"
+        >
+          {initials || "N"}
+        </Link>
+      </div>
     </header>
   );
 }

@@ -1,26 +1,26 @@
 @import "tailwindcss";
 
 :root {
-  --background: #050505;
-  --foreground: #f4f4f5;
-  --card: #0a0f1e;
-  --card-foreground: #f4f4f5;
-  --popover: #0a0f1e;
-  --popover-foreground: #f4f4f5;
-  --primary: #00f2ff;
-  --primary-foreground: #050505;
-  --secondary: #162036;
-  --secondary-foreground: #e4e4e7;
-  --muted: #0f172a;
-  --muted-foreground: #a1a1aa;
-  --accent: #0f172a;
-  --accent-foreground: #e4e4e7;
-  --destructive: #ff6b6b;
+  --background: #020a2f;
+  --foreground: #e1e4ff;
+  --card: #081542;
+  --card-foreground: #e1e4ff;
+  --popover: #132156;
+  --popover-foreground: #e1e4ff;
+  --primary: #85adff;
+  --primary-foreground: #00214f;
+  --secondary: #1f3da1;
+  --secondary-foreground: #c5ceff;
+  --muted: #0e1b4c;
+  --muted-foreground: #a0a9d5;
+  --accent: #132156;
+  --accent-foreground: #e1e4ff;
+  --destructive: #ff716c;
   --destructive-foreground: #ffffff;
-  --border: rgba(255, 255, 255, 0.08);
-  --input: rgba(255, 255, 255, 0.12);
-  --ring: rgba(0, 242, 255, 0.45);
-  --radius: 0.75rem;
+  --border: rgba(61, 70, 108, 0.15);
+  --input: rgba(19, 33, 86, 0.9);
+  --ring: rgba(133, 173, 255, 0.42);
+  --radius: 0.875rem;
 }
 
 @theme inline {
@@ -59,31 +59,210 @@ body {
 }
 
 body {
-  background: radial-gradient(circle at 0% 0%, rgba(0, 242, 255, 0.06), transparent 35%),
-    radial-gradient(circle at 100% 0%, rgba(204, 255, 0, 0.05), transparent 28%),
-    var(--background);
+  background:
+    radial-gradient(circle at top left, rgba(133, 173, 255, 0.12), transparent 26%),
+    radial-gradient(circle at top right, rgba(108, 159, 255, 0.08), transparent 22%),
+    linear-gradient(180deg, #040b33 0%, #020827 38%, #020624 100%);
   color: var(--foreground);
   font-family: var(--font-inter), sans-serif;
+  overflow-x: hidden;
+  text-rendering: optimizeLegibility;
 }
 
 .font-space {
   font-family: var(--font-space), sans-serif;
 }
 
+::selection {
+  background: rgba(133, 173, 255, 0.3);
+  color: #ffffff;
+}
+
+.obsidian-shell {
+  background:
+    radial-gradient(circle at top, rgba(133, 173, 255, 0.1), transparent 18%),
+    linear-gradient(180deg, rgba(4, 11, 51, 0.96), rgba(2, 8, 39, 0.98));
+}
+
+.obsidian-panel {
+  background: linear-gradient(180deg, rgba(10, 23, 70, 0.95), rgba(7, 18, 58, 0.92));
+  box-shadow:
+    inset 0 1px 0 rgba(133, 173, 255, 0.04),
+    0 24px 60px rgba(0, 0, 0, 0.24);
+}
+
+.obsidian-glass {
+  background: rgba(19, 33, 86, 0.48);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow:
+    inset 0 1px 0 rgba(133, 173, 255, 0.04),
+    0 24px 60px rgba(3, 8, 32, 0.22);
+}
+
+.obsidian-ghost-border {
+  border: 1px solid rgba(61, 70, 108, 0.18);
+}
+
+.obsidian-gradient-card {
+  background: linear-gradient(135deg, #1c75e7 0%, #6c9fff 100%);
+  box-shadow: 0 28px 64px rgba(25, 94, 205, 0.32);
+}
+
+.obsidian-chip {
+  background: rgba(133, 173, 255, 0.14);
+  color: #c6d7ff;
+}
+
+.obsidian-input {
+  background: rgba(19, 33, 86, 0.94);
+  box-shadow: inset 0 1px 0 rgba(133, 173, 255, 0.03);
+}
+
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #070b16;
+  background: #020a2f;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(0, 242, 255, 0.28);
+  background: rgba(61, 70, 108, 0.85);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 242, 255, 0.5);
+  background: rgba(133, 173, 255, 0.45);
+}
+
+/* Rollback overrides for the light-theme experiment */
+[class~="text-[#20283b]"],
+[class~="text-[#1f2739]"] {
+  color: #eef1ff !important;
+}
+
+[class~="text-[#24304a]"] {
+  color: #dce5ff !important;
+}
+
+[class~="text-[#25314a]"] {
+  color: #dce5ff !important;
+}
+
+[class~="text-[#17305e]"],
+[class~="text-[#284482]"] {
+  color: #03245d !important;
+}
+
+[class~="text-[#5d74ab]"] {
+  color: #a7b6eb !important;
+}
+
+[class~="text-[#4f74d6]"],
+[class~="text-[#5d84f1]"] {
+  color: #8db3ff !important;
+}
+
+[class~="text-[#5a77cc]"],
+[class~="text-[#6177d0]"] {
+  color: #8aa8ff !important;
+}
+
+[class~="text-[#6d7891]"],
+[class~="text-[#6f7b94]"],
+[class~="text-[#7a859c]"],
+[class~="text-[#7f8ebb]"],
+[class~="text-[#8a92a9]"],
+[class~="text-[#8792ab]"],
+[class~="text-[#8a95ac]"],
+[class~="text-[#9aa2b6]"] {
+  color: #95a1cf !important;
+}
+
+[class~="bg-[#edf3ff]"],
+[class~="bg-[#edf0ff]"],
+[class~="bg-[#eef3ff]"],
+[class~="bg-[#eef4ff]"],
+[class~="bg-[#edf2fb]"],
+[class~="bg-[#e8f0ff]"],
+[class~="bg-[#f5f8ff]"],
+[class~="bg-[#f8fbff]"],
+[class~="bg-[#e1ebff]"],
+[class~="bg-[#eaf1ff]"],
+[class~="bg-[#e3edff]"],
+[class~="bg-[#dbe7ff]"],
+[class~="bg-[#dbe8ff]"] {
+  background: #132156 !important;
+}
+
+[class~="bg-[#fffdf8]"],
+[class~="bg-[#fffaf1]"],
+[class~="bg-[#f6f2ea]"],
+[class~="bg-[#f7f3ec]"],
+[class~="bg-[#f6f1e8]"],
+[class~="bg-[#f8f4ec]"],
+[class~="bg-[#f4efe6]"],
+[class~="bg-[#f3eee5]"] {
+  background: #081542 !important;
+}
+
+[class*="bg-[#fffdf8]/84"],
+[class*="bg-[#fffdf8]/88"],
+[class*="bg-[#fffdf8]/96"],
+[class*="bg-white/58"] {
+  background: rgba(8, 21, 66, 0.88) !important;
+}
+
+[class~="bg-[#f4ebff]"],
+[class~="bg-[#f7ebff]"] {
+  background: rgba(250, 176, 255, 0.12) !important;
+}
+
+[class~="bg-[#e3e9f3]"],
+[class~="bg-[#e4eaf4]"],
+[class~="bg-[#d9e1ec]"],
+[class~="bg-[#d7deea]"] {
+  background: #1a285f !important;
+}
+
+[class~="border-[#d7deea]"],
+[class~="border-[#d5dce8]"],
+[class~="border-[#d9e1ec]"],
+[class~="border-[#dbe1eb]"],
+[class~="border-[#d8dfeb]"],
+[class~="border-[#c9d7ef]"],
+[class~="border-[#c3d0ea]"],
+[class~="border-[#b8c9f2]"],
+[class~="border-[#94b0ee]"],
+[class~="border-[#e0e6ef]"],
+[class~="border-[#c7d4ea]"],
+[class~="border-[#b7caf5]"],
+[class~="border-[#bdd0f5]"] {
+  border-color: rgba(61, 70, 108, 0.18) !important;
+}
+
+[class~="bg-[linear-gradient(135deg,#b7cef9,#8fb1f4)]"] {
+  background: linear-gradient(135deg, #8db3ff, #6c9fff) !important;
+}
+
+[class~="bg-[linear-gradient(135deg,#c5d7fb,#8fb1f4)]"] {
+  background: linear-gradient(135deg, #8db3ff, #6c9fff) !important;
+}
+
+[class~="bg-[linear-gradient(135deg,#bdd2fb,#8fb1f4)]"],
+[class~="bg-[linear-gradient(180deg,#7ea9ff,#94b9ff)]"],
+[class~="bg-[linear-gradient(135deg,#edf3ff,#dbe8ff)]"],
+[class~="bg-[linear-gradient(135deg,#f6f8ff,#edf3ff_45%,#dde8ff)]"],
+[class~="bg-[linear-gradient(135deg,#f8f8ff,#eef2ff_48%,#e3ebff)]"],
+[class~="bg-[linear-gradient(135deg,#fbfcff,#eff4ff_44%,#e4edff)]"],
+[class~="bg-[linear-gradient(135deg,#fbfcff,#eef4ff_44%,#e4ecff)]"],
+[class~="bg-[linear-gradient(135deg,#edf3ff,#dce7fb_35%,#f4efe6_72%,#fffaf1)]"],
+[class~="bg-[linear-gradient(120deg,#fbf9f3_0%,#f7f4ee_42%,#eef4ff_64%,#f8f4ec_100%)]"],
+[class~="bg-[linear-gradient(180deg,#fffdf8,#f8f4ec_46%,#f3eee5)]"],
+[class~="bg-[linear-gradient(180deg,#fffdf8,#f6f1e8)]"],
+[class~="bg-[linear-gradient(180deg,#fcfaf4,#f6f2ea)]"],
+[class~="bg-[linear-gradient(135deg,#fffdf8,#f5f8ff)]"] {
+  background: linear-gradient(180deg, rgba(12, 25, 78, 0.96), rgba(8, 21, 66, 0.94)) !important;
 }

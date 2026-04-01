@@ -23,7 +23,7 @@ export function CursorFollower() {
   return (
     <motion.div
       aria-hidden
-      className="pointer-events-none fixed left-0 top-0 z-[1] hidden h-60 w-60 rounded-full bg-[radial-gradient(circle,rgba(0,242,255,0.2),rgba(0,242,255,0))] blur-xl md:block"
+      className="pointer-events-none fixed left-0 top-0 z-[1] hidden h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(133,173,255,0.14),rgba(133,173,255,0))] blur-3xl md:block"
       style={{ x: smoothX, y: smoothY }}
     />
   );
