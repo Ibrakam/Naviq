@@ -132,7 +132,7 @@ export default function ProfilePage() {
   const topSkills = useMemo(() => {
     return Object.entries(skillSource)
       .sort((a, b) => b[1] - a[1])
-      .slice(0, 3);
+      .slice(0, 3) as Array<[string, number]>;
   }, [skillSource]);
 
   const dominantSkill = topSkills[0]?.[1] ? formatSkillLabel(topSkills[0][0]) : "Profile signals still calibrating";
@@ -366,7 +366,7 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="space-y-4">
-                  {(topSkills.length ? topSkills : [["technical", 0], ["analytics", 0], ["leadership", 0]]).map(([skill, value]) => (
+                  {(topSkills.length ? topSkills : [["technical", 0], ["analytics", 0], ["leadership", 0]] as Array<[string, number]>).map(([skill, value]) => (
                     <div key={skill} className="space-y-1.5">
                       <div className="flex items-center justify-between text-[11px] font-medium uppercase tracking-[0.08em] text-[#8a92a9]">
                         <span>{formatSkillLabel(skill)}</span>
