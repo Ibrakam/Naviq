@@ -152,7 +152,7 @@ export default function DashboardPage() {
       ["Critical Thinking", skillProfile?.critical_thinking],
     ] as const;
 
-    return entries.sort((a, b) => (b[1] ?? 0) - (a[1] ?? 0))[0];
+    return [...entries].sort((a, b) => (b[1] ?? 0) - (a[1] ?? 0))[0];
   }, [skillProfile]);
 
   const biggestGap = useMemo(() => {
